@@ -1,0 +1,10 @@
+development:
+  site: amctalk 
+  room: Banter
+  username: tim@openmonkey.com
+  password: 12qwaszx
+production:
+  site: amctalk 
+  room: AMC IT
+  username: tim@openmonkey.com
+  password: 12qwaszx
