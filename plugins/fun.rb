@@ -12,11 +12,10 @@ Plugin.define 'fun' do
   author 'Tim R.'
   version '1.0.0'
   
-  listen_for_command 'say' do |m|
-    
+  listen_for_command('say') do |m|
+    Bot.instance.room.speak(m[:message].gsub(/^!\w+/, ''))
   end
   
   # listen_for_message
   # listen_for_speaker
 end
-  

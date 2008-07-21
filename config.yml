@@ -1,6 +1,6 @@
 development:
   site: amctalk 
-  room: Banter
+  room: Test
   username: tim@openmonkey.com
   password: 12qwaszx
 production:

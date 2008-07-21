@@ -25,21 +25,27 @@ module PluginSugar
 end
 
 class Plugin
-  @registered_plugins = {}
+  @registered_plugins   = {}
+  @registered_commands  = {}
+  @registered_messages  = {}
+  @registered_speakers  = {}
   
   class << self
-    attr_reader :registered_plugins
+    attr_reader :registered_plugins,
+                :registered_commands,
+                :registered_messages,
+                :registered_speakers
     private :new
   end
 
   def self.define(name, &block)
-    p = new
-    p.instance_eval(&block)
-    Plugin.registered_plugins[name] = p
+    plugin = new
+    plugin.instance_eval(&block)
+    Plugin.registered_plugins[name] = plugin
   end
   
   def listen_for_command(command, &block)
-    
+    Plugin.registered_commands[command] = block
   end
 
   extend PluginSugar
@@ -47,28 +53,41 @@ class Plugin
 end
 
 class Bot
+  # this is necessary so the room and campfire objects can be accessed by plugins.
   include Singleton
   
   attr_reader :campfire, :room
   
-  def initialize(environment)
-    @config   = YAML::load(File.join(File.dirname(__FILE__), 'config.yml'))[ARGV.first]
-    @campfire = Tinder::Campfire.new(@config['site'])
-    
-    @campfire.login(@config['username'], @config['password'])
-    
-    @room     = @campfire.find_room_by_name(@config['room'])
-    @room.join
-    
+  def initialize
+    # Load plugins
     Dir["#{File.dirname(__FILE__)}/plugins/*.rb"].each{|x| load x }
+  end
+  
+  def connect(environment)
+    @config   = YAML::load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))[environment]
+    @campfire = Tinder::Campfire.new(@config['site'])
+    @campfire.login(@config['username'], @config['password'])
+    @room = @campfire.find_room_by_name(@config['room'])
+    @room.join
   end
   
   def run
     @room.listen do |m|
-      # process the messages here
+      p m
+      p m[:message]
+      if m[:message][0..0] == '!'
+        if response = Plugin.registered_commands[m[:message].gsub(/^!/, '').split(' ').first]
+          puts "yep."
+          response.call(m)
+        end
+      end
     end
   end
 end
+
+b = Bot.instance
+b.connect('development')
+b.run
 
 # loop do
 #   ical = Icalendar.parse(
