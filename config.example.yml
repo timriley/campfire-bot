@@ -1,10 +1,10 @@
 development:
-  site: amctalk 
+  site: campfire_subdomain_name 
   room: Test
-  username: tim@openmonkey.com
-  password: 12qwaszx
+  username: foo@bar.com
+  password: password
 production:
-  site: amctalk 
-  room: AMC IT
-  username: tim@openmonkey.com
-  password: 12qwaszx
+  site: campfire_subdomain_name
+  room: Company Chat
+  username: foo@bar.com
+  password: password
