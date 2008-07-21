@@ -1,21 +1,12 @@
-# Plugin.define "foo" do
-#   author "Tsukishiro M."
-#   version "1.0.0"
-#   
-#   # stuff
-#   def do_it(x)  # becomes a singleton method
-#     x * 2
-#   end
-# end
-
 Plugin.define 'fun' do
   author 'Tim R.'
   version '1.0.0'
   
-  listen_for_command('say') do |m|
-    Bot.instance.room.speak(m[:message].gsub(/^!\w+/, ''))
+  respond_to_command('say') do |m|
+    speak(m[:message].gsub(/^!\w+/, ''))
   end
   
-  # listen_for_message
-  # listen_for_speaker
+  respond_to_speaker('Tim R.') do |m|
+    speak('I agree with Tim.')
+  end
 end
