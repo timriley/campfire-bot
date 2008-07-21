@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# External Libs
 require 'rubygems'
 require 'tinder'
 require 'icalendar'
@@ -7,6 +8,9 @@ require 'net/http'
 require 'uri'
 require 'activesupport'
 require 'yaml'
+
+# Local Libs
+require 'plugin'
 
 class Bot
   # this is necessary so the room and campfire objects can be accessed by plugins.
@@ -31,8 +35,8 @@ class Bot
     catch(:stop_listening) do
       trap('INT') { throw :stop_listening }
       loop do
-        ping
-        @room.messages.each {|msg| handle_message(msg) }
+        @room.ping
+        @room.listen.each {|msg| handle_message(msg) }
         sleep interval
       end
     end
@@ -41,16 +45,21 @@ class Bot
   private
   
   def handle_message(msg)
+    puts
+    puts msg
+    
     # Look for commands
-    if m[:message][0..0] == '!'
+    if msg[:message][0..0] == '!'
       Plugin.registered_commands.each do |handler|
-        handler[1].call(msg) if handler[0] == m[:message].gsub(/^!/, '').split(' ').first
+        puts "MATCHED COMMAND: #{msg.inspect}"
+        handler[1].call(msg) if handler[0] == msg[:message].gsub(/^!/, '').split(' ').first
       end
     end
     
     # Look for speakers
     Plugin.registered_speakers.each do |handler|
-      handler[1].call(msg) if handler[0] == m[:person]
+      puts "MATCHED SPEAKER: #{msg.inspect}"
+      handler[1].call(msg) if handler[0] == msg[:person]
     end
   end
 end

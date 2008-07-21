@@ -28,11 +28,15 @@ class Plugin
     private :new
   end
 
+  # Building plugins
+
   def self.define(name, &block)
     plugin = new
     plugin.instance_eval(&block)
     Plugin.registered_plugins[name] = plugin
   end
+  
+  # Event handlers
   
   def respond_to_command(command, &block)
     Plugin.registered_commands << [command, block]
@@ -57,8 +61,13 @@ class Plugin
   end
 
   # Shortcuts to access the room
-  def speak
-    Bot.instance.room.speak
+  
+  def speak(words)
+    Bot.instance.room.speak(words)
+  end
+  
+  def paste(words)
+    Bot.instance.room.paste(words)
   end
   
   extend PluginSugar
