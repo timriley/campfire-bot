@@ -21,6 +21,11 @@ class Bot
   def initialize
     # Load plugins
     Dir["#{File.dirname(__FILE__)}/plugins/*.rb"].each{|x| load x }
+
+    # And instantiate them
+    PluginBase.registered_plugins.each_pair do |name, klass|
+      PluginBase.registered_plugins[name] = klass.new
+    end
   end
   
   def connect(environment)
@@ -48,19 +53,8 @@ class Bot
     puts
     puts msg
     
-    # Look for commands
-    if msg[:message][0..0] == '!'
-      Plugin.registered_commands.each do |handler|
-        puts "MATCHED COMMAND: #{msg.inspect}"
-        handler[1].call(msg) if handler[0] == msg[:message].gsub(/^!/, '').split(' ').first
-      end
-    end
-    
-    # Look for speakers
-    Plugin.registered_speakers.each do |handler|
-      puts "MATCHED SPEAKER: #{msg.inspect}"
-      handler[1].call(msg) if handler[0] == msg[:person]
-    end
+    PluginBase.registered_commands.each { |handler| handler.run(msg) }
+    PluginBase.registered_speakers.each { |handler| handler.run(msg) }
   end
 end
 
