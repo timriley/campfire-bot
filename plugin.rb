@@ -1,29 +1,57 @@
-class MessageHandler
-  attr_reader :kind, :matcher, :plugin, :method
+class EventHandler
+  attr_reader :matcher, :plugin, :method
   
-  def initialize(kind, matcher, plugin, method)
-    @kind     = kind
+  def initialize(matcher, plugin, method)
     @matcher  = matcher
     @plugin   = plugin
     @method   = method
   end
-  
-  def match?(msg)
-    case @kind
-    when :command
-      msg[:message][0..0] == '!' && msg[:message].gsub(/^!/, '').split(' ').first == @matcher
-    when :speaker
-      msg[:person] == @matcher
-    when :message
-      msg[:message] =~ @matcher
+    
+  def run(msg, force = false)
+    if force || match?(msg)
+      PluginBase.registered_plugins[@plugin].send(@method, msg)
     else
       false
     end
   end
+end
+
+class CommandHandler < EventHandler
+  def match?(msg)
+    msg[:message][0..0] == '!' && msg[:message].gsub(/^!/, '').split(' ').first == @matcher
+  end
+end
+
+class SpeakerHandler < EventHandler
+  def match?(msg)
+    msg[:person] == @matcher
+  end
+end
+
+class MessageHandler < EventHandler
+  def match?(msg)
+    msg[:message] =~ @matcher
+  end
+end
+
+class IntervalHandler < EventHandler
+  def initialize(*args)
+    @last_run = Time.now
+    super(*args)
+  end
   
-  def run(msg, force = false)
-    PluginBase.registered_plugins[@plugin].send(@method, msg) if force || match?(msg)
-  end  
+  def match?
+    @last_run < Time.now - @matcher
+  end
+  
+  def run(force = false)
+    if match?
+      PluginBase.registered_plugins[@plugin].send(@method)
+      @last_run = Time.now
+    else
+      false
+    end
+  end
 end
 
 module PluginSugar
@@ -47,6 +75,7 @@ class PluginBase
   @registered_commands  = []
   @registered_messages  = []
   @registered_speakers  = []
+  @registered_intervals = []
       
   class << self
     extend PluginSugar
@@ -55,7 +84,8 @@ class PluginBase
     attr_reader :registered_plugins,
                 :registered_commands,
                 :registered_messages,
-                :registered_speakers
+                :registered_speakers,
+                :registered_intervals
   end
 
   # Registering plugins
@@ -68,29 +98,31 @@ class PluginBase
   
   def self.respond_to_command(command, *methods)
     methods.each do |method|
-      PluginBase.registered_commands << MessageHandler.new(:command, command, self.to_s, method)
+      PluginBase.registered_commands << CommandHandler.new(command, self.to_s, method)
     end
   end
   
   def self.respond_to_message(regexp, *methods)
     methods.each do |method|
-      PluginBase.registered_messages << MessageHandler.new(:message, regexp, self.to_s, method)
+      PluginBase.registered_messages << MessageHandler.new(regexp, self.to_s, method)
     end
   end
   
   def self.respond_to_speaker(speaker, *methods)
     methods.each do |method|
-      PluginBase.registered_speakers << MessageHandler.new(:speaker, speaker, self.to_s, method)
+      PluginBase.registered_speakers << SpeakerHandler.new(speaker, self.to_s, method)
     end
   end
   
-  # TODO
-  
-  def self.at_interval(seconds, &block)
-    
+  def self.at_interval(interval, *methods)
+    methods.each do |method|
+      PluginBase.registered_intervals << IntervalHandler.new(interval, self.to_s, method)
+    end
   end
+
+  # TODO - do I want to support this?
   
-  def self.at_time(timestamp, &block)
+  def self.at_time(timestamp, *methods)
     
   end
 

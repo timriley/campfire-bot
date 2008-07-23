@@ -42,6 +42,7 @@ class Bot
       loop do
         @room.ping
         @room.listen.each {|msg| handle_message(msg) }
+        PluginBase.registered_intervals.each { |handler| handler.run }
         sleep interval
       end
     end
@@ -51,10 +52,11 @@ class Bot
   
   def handle_message(msg)
     puts
-    puts msg
+    puts msg.inspect
     
     PluginBase.registered_commands.each { |handler| handler.run(msg) }
     PluginBase.registered_speakers.each { |handler| handler.run(msg) }
+    PluginBase.registered_messages.each { |handler| handler.run(msg) }
   end
 end
 
