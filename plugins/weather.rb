@@ -1,11 +1,22 @@
-require 'hpricot'
-require 'open-uri'
+require 'yahoo-weather'
 
 class Weather < PluginBase
   respond_to_command 'weather', :weather
   
   def weather(msg)
-    doc = Hpricot(open("http://weather.yahooapis.com/forecastrss?p=ASXX0023&u=c"))
-    paste(doc.search('description'))
+    city = {
+      'adelaide'  => 'ASXX0001',
+      'brisbane'  => 'ASXX0016',
+      'canberra'  => 'ASXX0023',
+      'darwin'    => 'ASXX0032',
+      'hobart'    => 'ASXX0057',
+      'melbourne' => 'ASXX0075',
+      'perth'     => 'ASXX0231',
+      'sydney'    => 'ASXX0112'
+    }[(msg[:message].split(' ')[1] || 'canberra').downcase]
+    
+    data = YahooWeather::Client.new.lookup_location(city, 'c')
+    
+    speak("#{data.title} - #{data.condition.text}, #{data.condition.temp} deg C (high #{data.forecasts.first.high}, low #{data.forecasts.first.low})")
   end
 end

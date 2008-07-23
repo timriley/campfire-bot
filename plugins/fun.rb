@@ -5,7 +5,7 @@ class FunPlugin < PluginBase
   respond_to_command  'say',      :say
   respond_to_speaker  'Tim R.',   :agree_with_tim
   respond_to_message  /hidder/i,  :hidder
-  at_interval         30.seconds, :test
+  # at_interval         30.seconds, :test
   
   def initialize
     @last_agreed = 20.minutes.ago
