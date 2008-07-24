@@ -42,7 +42,8 @@ class Bot
       loop do
         @room.ping
         @room.listen.each {|msg| handle_message(msg) }
-        PluginBase.registered_intervals.each { |handler| handler.run }
+        PluginBase.registered_intervals.each  { |handler| handler.run }
+        PluginBase.registered_times.each_with_index { |handler, index| PluginBase.registered_times.delete_at(index) if handler.run }
         sleep interval
       end
     end

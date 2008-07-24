@@ -1,4 +1,4 @@
-class EventHandler
+  class EventHandler
   attr_reader :matcher, :plugin, :method
   
   def initialize(matcher, plugin, method)
@@ -54,6 +54,26 @@ class IntervalHandler < EventHandler
   end
 end
 
+class TimeHandler < EventHandler
+  def initialize(*args)
+    @run = false
+    super(*args)
+  end
+  
+  def match?
+    @matcher <= Time.now && !@run
+  end
+  
+  def run(force = false)
+    if match?
+      PluginBase.registered_plugins[@plugin].send(@method)
+      @run = true
+    else
+      false
+    end
+  end
+end
+
 module PluginSugar
   def def_field(*names)
     class_eval do 
@@ -76,6 +96,7 @@ class PluginBase
   @registered_messages  = []
   @registered_speakers  = []
   @registered_intervals = []
+  @registered_times     = []
       
   class << self
     extend PluginSugar
@@ -85,7 +106,8 @@ class PluginBase
                 :registered_commands,
                 :registered_messages,
                 :registered_speakers,
-                :registered_intervals
+                :registered_intervals,
+                :registered_times
   end
 
   # Registering plugins
@@ -96,19 +118,19 @@ class PluginBase
 
   # Event handlers
   
-  def self.respond_to_command(command, *methods)
+  def self.on_command(command, *methods)
     methods.each do |method|
       PluginBase.registered_commands << CommandHandler.new(command, self.to_s, method)
     end
   end
   
-  def self.respond_to_message(regexp, *methods)
+  def self.on_message(regexp, *methods)
     methods.each do |method|
       PluginBase.registered_messages << MessageHandler.new(regexp, self.to_s, method)
     end
   end
   
-  def self.respond_to_speaker(speaker, *methods)
+  def self.on_speaker(speaker, *methods)
     methods.each do |method|
       PluginBase.registered_speakers << SpeakerHandler.new(speaker, self.to_s, method)
     end
@@ -120,10 +142,10 @@ class PluginBase
     end
   end
 
-  # TODO - do I want to support this?
-  
   def self.at_time(timestamp, *methods)
-    
+    methods.each do |method|
+      PluginBase.registered_times << TimeHandler.new(timestamp, self.to_s, method)
+    end
   end
 
   # Shortcuts to access the room
