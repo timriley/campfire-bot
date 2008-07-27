@@ -1,10 +1,11 @@
 class Fun < PluginBase
   author 'Tim Riley'
   
-  on_command    'say',              :say
+  on_command    /say/,              :say
+  on_command    /should (i|he|she|we) do it\?/i, :do_or_do_not
   on_speaker    'Tim R.',           :agree_with_tim
-  on_message    /undo it/i,         :do_it
-  on_message    /(^|\s)do it/i,     :undo_it
+  # on_message    /undo it/i,         :do_it
+  # on_message    /(^|\s)do it/i,     :undo_it
   # at_time       1.minute.from_now,  :do_it
   
   def initialize
@@ -21,6 +22,11 @@ class Fun < PluginBase
   
   def undo_it(m)
     speak('Undo it!')
+  end
+  
+  def do_or_do_not(m)
+    responses = ['Do it!', 'Don\'t do it!', 'Undo it!']
+    speak(responses[rand(responses.size)])
   end
   
   def agree_with_tim(m)

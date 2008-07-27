@@ -3,20 +3,18 @@
 # External Libs
 require 'rubygems'
 require 'tinder'
-require 'icalendar'
-require 'net/http'
-require 'uri'
 require 'activesupport'
 require 'yaml'
 
 # Local Libs
+require 'event'
 require 'plugin'
 
 class Bot
   # this is necessary so the room and campfire objects can be accessed by plugins.
   include Singleton
   
-  attr_reader :campfire, :room
+  attr_reader :campfire, :room, :config
   
   def initialize
     # Load plugins

@@ -1,3 +1,7 @@
+# require 'icalendar'
+# require 'net/http'
+# require 'uri'
+
 # loop do
 #   ical = Icalendar.parse(
 #     Net::HTTP.get(URI.parse('http://homepage.mac.com/tariley/.calendars/campfire.ics'))
