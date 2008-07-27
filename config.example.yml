@@ -2,9 +2,11 @@ development:
   site: campfire_subdomain_name 
   room: Test
   username: foo@bar.com
+  nickname: Bot Name
   password: password
 production:
   site: campfire_subdomain_name
   room: Company Chat
   username: foo@bar.com
+  nickname: Bot Name
   password: password
