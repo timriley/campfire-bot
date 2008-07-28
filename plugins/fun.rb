@@ -2,8 +2,8 @@ class Fun < PluginBase
   author 'Tim Riley'
   
   on_command    /say/,              :say
-  on_command    /should (i|he|she|we) do it\?/i, :do_or_do_not
-  on_speaker    'Tim R.',           :agree_with_tim
+  on_command    /(should|can|will|shall) (i|he|she|we|they) do it\?/i, :do_or_do_not
+  # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it
   # on_message    /(^|\s)do it/i,     :undo_it
   # at_time       1.minute.from_now,  :do_it
