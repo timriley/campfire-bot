@@ -1,8 +1,7 @@
 class Fun < PluginBase
-  author 'Tim Riley'
-  
-  on_command    /say/,              :say
-  on_command    /(should|can|will|shall) (i|he|she|we|they) do it\?/i, :do_or_do_not
+  on_command    'say',              :say
+  on_message    Regexp.new("^#{Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
+  on_message    /^(good morning|morning|m0ink)$/i, :greet
   # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it
   # on_message    /(^|\s)do it/i,     :undo_it
@@ -32,5 +31,10 @@ class Fun < PluginBase
   def agree_with_tim(m)
     speak('I agree with Tim.') unless @last_agreed > 15.minutes.ago
     @last_agreed = Time.now
+  end
+  
+  def greet(m)
+    messages = ['Howdy', 'Wassup', 'Greets', 'Hello', 'Hey there', "It's a", 'Good day']
+    speak("#{messages[rand(messages.size)]} #{m[:person].split(' ')[0]}")
   end
 end

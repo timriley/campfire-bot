@@ -1,3 +1,14 @@
+# Inspired by activesupport's CallbackChain
+class HandlerChain < Array
+  def run(object, options = {}, &terminator)
+    enumerator = options[:enumerator] || :each
+    
+    unless block_given?
+      send(enumerator) { |handler| handler.run }
+    end
+  end
+end
+
 class EventHandler
   attr_reader :matcher, :plugin, :method
   
@@ -9,10 +20,16 @@ class EventHandler
     
   def run(msg, force = false)
     if force || match?(msg)
-      PluginBase.registered_plugins[@plugin].send(@method, msg)
+      PluginBase.registered_plugins[@plugin].send(@method, filter_message(msg))
     else
       false
     end
+  end
+  
+  protected
+  
+  def filter_message(msg)
+    msg
   end
 end
 
@@ -20,9 +37,17 @@ class CommandHandler < EventHandler
   def match?(msg)
     (
       msg[:message][0..0] == '!' || 
-      msg[:message] =~ Regexp.new("^#{Bot.instance.config['nickname']},", Regexp::IGNORECASE)
+      msg[:message]       =~ Regexp.new("^#{Bot.instance.config['nickname']},", Regexp::IGNORECASE)
     ) &&
-    msg[:message].gsub(/^!/, '').gsub(/^#{Bot.instance.config['nickname']},\s*/i, '') =~ @matcher
+    msg[:message].gsub(/^!/, '').gsub(Regexp.new("#{Bot.instance.config['nickname']},\\s*", Regexp::IGNORECASE), '').split(' ')[0].downcase == @matcher.downcase
+    # FIXME - the above should be just done with one regexp to pull out the first non-! non-<bot name> word.
+  end
+  
+  protected
+  
+  def filter_message(msg)
+    msg[:message] = msg[:message].gsub(/^!/, '').gsub(Regexp.new("#{Bot.instance.config['nickname']},\\s*", Regexp::IGNORECASE), '')
+    msg
   end
 end
 

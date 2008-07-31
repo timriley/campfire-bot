@@ -1,7 +1,7 @@
 require 'yahoo-weather'
 
 class Weather < PluginBase
-  on_command /weather/, :weather
+  on_command 'weather', :weather
   
   def weather(msg)
     city = {
