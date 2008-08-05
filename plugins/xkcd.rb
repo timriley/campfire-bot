@@ -12,11 +12,11 @@ Tempfile.class_eval do
 end
 
 class Xkcd < PluginBase
+  BASE_URL = 'http://xkcd.com/'
+  
   on_command 'xkcd', :xkcd
   
-  def xkcd(msg)
-    @base_url = 'http://xkcd.com/'
-    
+  def xkcd(msg)    
     # Get the comic info
     comic = case msg[:message].split(/\s+/)[1]
     when 'latest'
@@ -51,11 +51,11 @@ class Xkcd < PluginBase
   def fetch_random
     # Fetch the latest page and then find the link to the previous comic.
     # This will give us a number to work with (that of the penultimate strip).
-    fetch_comic(rand((Hpricot(open(@base_url))/'//*[@accesskey="p"]').first['href'].gsub(/\D/, '').to_i + 1))
+    fetch_comic(rand((Hpricot(open(BASE_URL))/'//*[@accesskey="p"]').first['href'].gsub(/\D/, '').to_i + 1))
   end
   
   def fetch_comic(id = nil)
     # Rely on the comic being the last image on the page with a title attribute
-    (Hpricot(open("#{@base_url}#{id.to_s + '/' if id}"))/'img[@title]').last
+    (Hpricot(open("#{BASE_URL}#{id.to_s + '/' if id}"))/'img[@title]').last
   end
 end
