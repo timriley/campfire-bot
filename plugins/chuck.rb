@@ -6,21 +6,21 @@ class Chuck < PluginBase
   
   def chuck(msg)
     # Get our sayings from a Chuck Norris facts page (one of 9 to-date)
-    @url = "http://www.chucknorrisfacts.com/page#{rand(8)+1}.html"
-    @response = ''
+    url = "http://www.chucknorrisfacts.com/page#{rand(8)+1}.html"
+    response = ''
     fact_file = Array.new
 
     begin
       # open-uri RDoc: http://stdlib.rubyonrails.org/libdoc/open-uri/rdoc/index.html
-      open(@url, "User-Agent" => "Ruby/#{RUBY_VERSION}",
+      open(url, "User-Agent" => "Ruby/#{RUBY_VERSION}",
         "From" => "Campfire") { |f|
                                   
         # Save the response body
-        @response = f.read
+        response = f.read
       }
     
       # HPricot RDoc: http://code.whytheluckystiff.net/hpricot/
-      doc = Hpricot(@response)
+      doc = Hpricot(response)
     
       # Pull out all the facts and load them into an array
       (doc/"*/li").each do |fact|
