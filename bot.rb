@@ -2,13 +2,15 @@
 
 # External Libs
 require 'rubygems'
-require 'tinder'
 require 'activesupport'
 require 'yaml'
 
 # Local Libs
 require 'event'
 require 'plugin'
+
+# This requires my fork of tinder for the time being
+require '../tinder/lib/tinder'
 
 class Bot
   # this is necessary so the room and campfire objects can be accessed by plugins.

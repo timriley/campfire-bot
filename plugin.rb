@@ -81,4 +81,9 @@ class PluginBase
   def paste(words)
     Bot.instance.room.paste(words)
   end
+  
+  def upload(file_path)
+    Bot.instance.room.upload(file_path)
+  end
+    
 end
