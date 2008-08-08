@@ -6,7 +6,7 @@ class Quote < PluginBase
   
   def quote(msg)
     # Get our quotes from the web
-    url = "http://quotes4all.net/rss/000010110/quotes..xml"
+    url = "http://quotes4all.net/rss/000010110/quotes.xml"
     response = ''
 
     begin
