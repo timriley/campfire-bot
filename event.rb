@@ -46,7 +46,7 @@ class CommandHandler < EventHandler
   protected
   
   def filter_message(msg)
-    msg[:message] = msg[:message].gsub(/^!/, '').gsub(Regexp.new("#{Bot.instance.config['nickname']},\\s*", Regexp::IGNORECASE), '')
+    msg[:message] = msg[:message].gsub(Regexp.new("^(!|#{Bot.instance.config['nickname']},)\\s*#{@matcher}\\s*", Regexp::IGNORECASE), '')
     msg
   end
 end

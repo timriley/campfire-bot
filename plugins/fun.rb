@@ -1,7 +1,7 @@
 class Fun < PluginBase
   on_command    'say',              :say
   on_message    Regexp.new("^#{Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
-  on_message    /^(good morning|morning|m0ink)$/i, :greet
+  on_message    /^(good morning|morning|m0ink).$/i, :greet
   # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it
   # on_message    /(^|\s)do it/i,     :undo_it
@@ -12,7 +12,7 @@ class Fun < PluginBase
   end
   
   def say(m)
-    speak(m[:message].gsub(/^!\w+/, ''))
+    speak(m[:message])
   end
   
   def do_it(m = nil)
