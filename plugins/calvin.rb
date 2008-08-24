@@ -28,8 +28,6 @@ class Calvin < PluginBase
       fetch_random
     end
     
-    puts "comic is #{comic}"
-    
     # Now download it
     file = Tempfile.new("calvin-#{comic.split('/').last}")
     file.write(open(comic).read)
