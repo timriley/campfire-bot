@@ -37,7 +37,7 @@ class PluginBase
   # Registering plugins
   
   def self.inherited(child)
-    PluginBase.registered_plugins[child.to_s] = child
+    PluginBase.registered_plugins[child.to_s] = child.new
   end
 
   # Event handlers

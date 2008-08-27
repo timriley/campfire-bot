@@ -52,11 +52,6 @@ class Bot
   
   def load_plugins
     Dir["#{File.dirname(__FILE__)}/plugins/*.rb"].each{|x| load x }
-
-    # And instantiate them
-    PluginBase.registered_plugins.each_pair do |name, klass|
-      PluginBase.registered_plugins[name] = klass.new
-    end
   end
   
   def handle_message(msg)
