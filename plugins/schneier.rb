@@ -28,7 +28,6 @@ class Schneier < PluginBase
   
   def fetch_quote(id = nil)
     (Hpricot(open("#{BASE_URL}/#{id ? id : 'latest'}"))).search('p .fact').html
-    
   end
   
   def total_quotes
