@@ -2,18 +2,18 @@ require 'open-uri'
 require 'hpricot'
 
 class Schneier < PluginBase
-  BASE_URL   = 'http://geekz.co.uk/schneierfacts/fact'
+  BASE_URL   = 'http://geekz.co.uk/schneierfacts'
   
   on_command 'schneier', :schneier
   
   def schneier(msg)
     quote = case msg[:message].split(/\s+/)[1]
     when 'latest'
-      fetch_quote
+      fetch_quote(true)
     when 'random'
-      fetch_random
+      fetch_quote
     else
-      fetch_random
+      fetch_quote
     end
     speak quote
   rescue => e
@@ -21,16 +21,8 @@ class Schneier < PluginBase
   end
   
   private
-  
-  def fetch_random
-    fetch_quote(rand(total_quotes))
-  end
-  
-  def fetch_quote(id = nil)
-    (Hpricot(open("#{BASE_URL}/#{id ? id : 'latest'}"))).search('p .fact').html
-  end
-  
-  def total_quotes
-    (Hpricot(open("#{BASE_URL}/latest"))).search('.navigation a').first.attributes['href'].split('/').reverse[0].to_i
+
+  def fetch_quote(latest = false)
+    CGI::unescapeHTML((Hpricot(open("#{BASE_URL}#{'/fact/latest' if latest}"))).search('p .fact').html)
   end
 end
