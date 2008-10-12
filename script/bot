@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + '/../lib/bot'
+
+# Run this script with the environment as the only argument. eg. ./script/bot development
+BOT_ENVIRONMENT = ARGV.first
+BOT_ROOT        = File.dirname(__FILE__)
+
+bot.connect
+bot.run

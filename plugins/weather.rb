@@ -1,6 +1,6 @@
 require 'yahoo-weather'
 
-class Weather < PluginBase
+class Weather < CampfireBot::Plugin::Base
   on_command 'weather', :weather
   
   def weather(msg)
