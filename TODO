@@ -7,3 +7,7 @@
 - plugins should be able to register respond_to blocks with a notion of priority.
   eg. a low-priority command can say it doesn't need to be processed if something else matches.
   conversely, a high-priority command can cause to bot to stop processing the message once it has matched.
+
+- create a plugin that pulls in unfuddle ticket reports, eg. !unfuddle project_name active_tickets
+
+- modify the austin powers plugin to be a generic imdb quote puller. eg. !imdb austin_powers
