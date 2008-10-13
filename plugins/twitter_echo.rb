@@ -5,6 +5,9 @@ require 'time'
 require 'htmlentities'
 require 'fileutils'
 
+# The workings of this plugin come directly from http://github.com/paulca/twitter2campfire
+# Thanks to Paul Campbell and Contrast! <http://www.contrast.ie/>
+
 class TwitterEcho < PluginBase
   
   at_interval 2.minutes, :echo_tweets
