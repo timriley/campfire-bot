@@ -40,7 +40,7 @@ class Bot
         @room.listen.each { |msg| handle_message(msg) }
         
         # Run time-oriented events
-        PluginBase.registered_intervals.each  { |handler| handler.run }
+        PluginBase.registered_intervals.each        { |handler| handler.run }
         PluginBase.registered_times.each_with_index { |handler, index| PluginBase.registered_times.delete_at(index) if handler.run }
         
         sleep interval
@@ -52,6 +52,11 @@ class Bot
   
   def load_plugins
     Dir["#{File.dirname(__FILE__)}/plugins/*.rb"].each{|x| load x }
+    
+    # And instantiate them
+    PluginBase.registered_plugins.each_pair do |name, klass|
+      PluginBase.registered_plugins[name] = klass.new
+    end
   end
   
   def handle_message(msg)
@@ -70,6 +75,7 @@ end
 
 # Run this script with the environment as the only argument. eg. ./bot.rb development
 BOT_ENVIRONMENT = ARGV.first
+BOT_ROOT        = File.dirname(__FILE__)
 
 b = Bot.instance
 b.connect
