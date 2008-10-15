@@ -18,13 +18,13 @@ class Xkcd < PluginBase
   
   def xkcd(msg)    
     # Get the comic info
-    comic = case msg[:message].split(/\s+/)[1]
+    comic = case msg[:message].split(/\s+/)[0]
     when 'latest'
       fetch_latest
     when 'random'
       fetch_random
     when /d+/
-      fetch_comic(msg[:message].split(/\s+/)[1])
+      fetch_comic(msg[:message].split(/\s+/)[0])
     else
       fetch_random
     end
