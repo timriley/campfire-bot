@@ -28,9 +28,6 @@ class LolCats < PluginBase
     
     # And remove the tempfile
     file.close!
-    
-    # Speak the alt unless it is not there or is just an ugly file name
-    speak lolcat['alt'] unless lolcat['alt'].nil? or lolcat['alt'].split('.').reverse[0] == 'jpg'
   rescue => e
     speak e
   end
