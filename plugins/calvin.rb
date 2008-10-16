@@ -19,11 +19,11 @@ class Calvin < PluginBase
   on_command 'calvin', :calvin
   
   def calvin(msg)    
-    comic = case msg[:message].split(/\s+/)[1]
+    comic = case msg[:message].split(/\s+/)[0]
     when 'random'
       fetch_random
     when /d+/
-      fetch_comic(msg[:message].split(/\s+/)[1])
+      fetch_comic(msg[:message].split(/\s+/)[0])
     else
       fetch_random
     end

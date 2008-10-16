@@ -7,7 +7,7 @@ class Schneier < PluginBase
   on_command 'schneier', :schneier
   
   def schneier(msg)
-    quote = case msg[:message]
+    quote = case msg[:message].split(/\s+/)[0]
     when 'latest'
       fetch_quote(true)
     when 'random'
