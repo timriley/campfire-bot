@@ -20,16 +20,25 @@ class Bot
   attr_reader :campfire, :room, :config
   
   def initialize
-    @config   = YAML::load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))[BOT_ENVIRONMENT]
+    @config = YAML::load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))[BOT_ENVIRONMENT]
   end
   
   def connect
     load_plugins
     
-    @campfire = Tinder::Campfire.new(@config['site'])
-    @campfire.login(@config['username'], @config['password'])
-    @room = @campfire.find_room_by_name(@config['room'])
-    @room.join
+    
+    if @config['guesturl']
+      baseurl, guest_token = @config['guesturl'].split(/.com\//)
+      @campfire = Tinder::Campfire.new(@config['site'], :guesturl => @config['guesturl'], :ssl => @config['ssl'])
+      roomid = @campfire.guestlogin(@config['guesturl'], @config['nickname'])
+      @room = Tinder::Room.new(@campfire, roomid, @config['room'])
+      @room.join
+    else  
+      @campfire = Tinder::Campfire.new(@config['site'])
+      @campfire.login(@config['username'], @config['password'])
+      @room = @campfire.find_room_by_name(@config['room'])
+      @room.join
+    end
   end
   
   def run(interval = 5)

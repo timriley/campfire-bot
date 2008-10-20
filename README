@@ -3,3 +3,20 @@ This is an under-heavy-development bot for the Campfire web-based chat system.
 It aims to be multi-purpose and extensible.
 
  - Tim Riley <tim at openmonkey dot com>
+ 
+Requirements:
+ 
+rubygems
+hpricot
+mime-types
+activesupport 
+
+Configuration: 
+
+in config.yml
+
+Running:
+
+Run bot.rb with the environment name as the argument
+
+./bot.rb development

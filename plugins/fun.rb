@@ -1,7 +1,8 @@
 class Fun < PluginBase
   on_command    'say',              :say
   on_message    Regexp.new("^#{Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
-  on_message    /^(good morning|morning|m0ink).$/i, :greet
+  on_message    Regexp.new("^(good morning|morning|m0ink|hello|hi|hey|whassup|what's up|yo|hola|ola|'sup|sup)(,)*\\s*(#{Bot.instance.config['nickname']}).*$", Regexp::IGNORECASE), :greet
+  on_message  /(how's it|how are|how're) (ya |you )*(going|doing|doin).*/, :howareya
   # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it
   # on_message    /(^|\s)do it/i,     :undo_it
@@ -34,7 +35,14 @@ class Fun < PluginBase
   end
   
   def greet(m)
-    messages = ['Howdy', 'Wassup', 'Greets', 'Hello', 'Hey there', "It's a", 'Good day']
+    puts "greet() triggered: #{m}"
+    messages = ['Howdy', 'Wassup', 'Hello', 'Hey there', "Yo", 'Good day', 'Hi,', 'Hey']
     speak("#{messages[rand(messages.size)]} #{m[:person].split(' ')[0]}")
+  end
+  
+  def howareya(m)
+    messages = ["just great", "peachy", "mas o menos", 
+    	 "you know how it is", "eh, ok", "pretty good. how about you?"]
+    speak(messages[rand(messages.size)])
   end
 end

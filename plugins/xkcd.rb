@@ -34,6 +34,8 @@ class Xkcd < PluginBase
     file.write(open(comic['src']).read)
     file.flush
     
+    puts file.path 
+    
     # Upload it
     upload(file.path)
     speak(comic['title'])
