@@ -18,7 +18,7 @@ class Dilbert < PluginBase
   on_command 'dilbert', :dilbert
   
   def dilbert(msg)
-    comic = case msg[:message].split(/\s+/)[1]
+    comic = case msg[:message].split(/\s+/)[0]
     when 'latest'
       fetch_latest
     when 'random'

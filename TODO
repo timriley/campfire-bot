@@ -1,3 +1,11 @@
+- multi-room support
+
+- gem-ify the bot and have it provide an executable to generate an application directory 
+  like rails
+
+- move the plugins into their own repository and provide a way for them to be installed 
+  into the app dir above (like script/plugin install)
+
 - use a message handler chain in the same way that activesupport uses callback chains.
 
 - provide a way for plugins to buffer themselves, so they don't run too many times
@@ -7,3 +15,7 @@
 - plugins should be able to register respond_to blocks with a notion of priority.
   eg. a low-priority command can say it doesn't need to be processed if something else matches.
   conversely, a high-priority command can cause to bot to stop processing the message once it has matched.
+
+- create a plugin that pulls in unfuddle ticket reports, eg. !unfuddle project_name active_tickets
+
+- modify the austin powers plugin to be a generic imdb quote puller. eg. !imdb austin_powers
