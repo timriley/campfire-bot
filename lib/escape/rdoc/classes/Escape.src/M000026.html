@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_form (Escape)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File escape.rb, line 209</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_form</span>(<span class="ruby-identifier">pairs</span>, <span class="ruby-identifier">sep</span>=<span class="ruby-value str">'&amp;'</span>)
+    <span class="ruby-identifier">r</span> = <span class="ruby-value str">''</span>
+    <span class="ruby-identifier">first</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-identifier">pairs</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment cmt"># query-chars - pct-encoded - x-www-form-urlencoded-delimiters =</span>
+      <span class="ruby-comment cmt">#   unreserved / &quot;!&quot; / &quot;$&quot; / &quot;'&quot; / &quot;(&quot; / &quot;)&quot; / &quot;*&quot; / &quot;,&quot; / &quot;:&quot; / &quot;@&quot; / &quot;/&quot; / &quot;?&quot;</span>
+      <span class="ruby-comment cmt"># query-char - pct-encoded = unreserved / sub-delims / &quot;:&quot; / &quot;@&quot; / &quot;/&quot; / &quot;?&quot;</span>
+      <span class="ruby-comment cmt"># query-char = pchar / &quot;/&quot; / &quot;?&quot; = unreserved / pct-encoded / sub-delims / &quot;:&quot; / &quot;@&quot; / &quot;/&quot; / &quot;?&quot;</span>
+      <span class="ruby-comment cmt"># unreserved = ALPHA / DIGIT / &quot;-&quot; / &quot;.&quot; / &quot;_&quot; / &quot;~&quot;</span>
+      <span class="ruby-comment cmt"># sub-delims = &quot;!&quot; / &quot;$&quot; / &quot;&amp;&quot; / &quot;'&quot; / &quot;(&quot; / &quot;)&quot; / &quot;*&quot; / &quot;+&quot; / &quot;,&quot; / &quot;;&quot; / &quot;=&quot;</span>
+      <span class="ruby-comment cmt"># x-www-form-urlencoded-delimiters = &quot;&amp;&quot; / &quot;+&quot; / &quot;;&quot; / &quot;=&quot;</span>
+      <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sep</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">first</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-identifier">k</span>.<span class="ruby-identifier">each_byte</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">byte</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">byte</span>.<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">%r{[^0-9A-Za-z\-\._~:/?@!\$'()*,]}n</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">ch</span>
+          <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;%&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ch</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;H2&quot;</span>)[<span class="ruby-value">0</span>].<span class="ruby-identifier">upcase</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ch</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'='</span>
+      <span class="ruby-identifier">v</span>.<span class="ruby-identifier">each_byte</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">byte</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">byte</span>.<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">%r{[^0-9A-Za-z\-\._~:/?@!\$'()*,]}n</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">ch</span>
+          <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;%&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ch</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;H2&quot;</span>)[<span class="ruby-value">0</span>].<span class="ruby-identifier">upcase</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ch</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+    }
+    <span class="ruby-constant">PercentEncoded</span>.<span class="ruby-identifier">new_no_dup</span>(<span class="ruby-identifier">r</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
