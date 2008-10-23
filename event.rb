@@ -39,7 +39,7 @@ class CommandHandler < EventHandler
       msg[:message][0..0] == '!' || 
       msg[:message]       =~ Regexp.new("^#{Bot.instance.config['nickname']},", Regexp::IGNORECASE)
     ) &&
-    msg[:message].gsub(/^!/, '').gsub(Regexp.new("#{Bot.instance.config['nickname']},\\s*", Regexp::IGNORECASE), '').split(' ')[0].downcase == @matcher.downcase
+    msg[:message].gsub(/^!/, '').gsub(Regexp.new("#{Bot.instance.config['nickname']},\\s*", Regexp::IGNORECASE), '').split(' ')[0].to_s.downcase == @matcher.downcase
     # FIXME - the above should be just done with one regexp to pull out the first non-! non-<bot name> word.
   end
   
