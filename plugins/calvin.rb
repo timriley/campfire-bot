@@ -11,7 +11,7 @@ Tempfile.class_eval do
   end
 end
 
-class Calvin < CampfireBot::Plugin::Base
+class Calvin < CampfireBot::Plugin
   BASE_URL    = 'http://www.marcellosendos.ch/comics/ch/'
   START_DATE  = Date.parse('1984-08-14')
   END_DATE    = Date.parse('1995-12-31') # A sad day

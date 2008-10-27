@@ -17,7 +17,7 @@ module CampfireBot
     
       def run(msg, force = false)
         if force || match?(msg)
-          PluginBase.registered_plugins[@plugin].send(@method, filter_message(msg))
+          Plugin.registered_plugins[@plugin].send(@method, filter_message(msg))
         else
           false
         end
@@ -80,7 +80,7 @@ module CampfireBot
   
       def run(force = false)
         if match?
-          PluginBase.registered_plugins[@plugin].send(@method)
+          Plugin.registered_plugins[@plugin].send(@method)
           @last_run = Time.now
         else
           false
@@ -102,7 +102,7 @@ module CampfireBot
   
       def run(force = false)
         if match?
-          PluginBase.registered_plugins[@plugin].send(@method)
+          Plugin.registered_plugins[@plugin].send(@method)
           @run = true
         else
           false

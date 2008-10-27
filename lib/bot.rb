@@ -8,7 +8,8 @@ require "#{BOT_ROOT}/lib/event"
 require "#{BOT_ROOT}/lib/plugin"
 
 # This requires my fork of tinder for the time being
-require "#{BOT_ROOT}/../tinder/lib/tinder"
+# http://github.com/timriley/tinder/tree
+require 'tinder'
 
 module CampfireBot
   class Bot
@@ -19,7 +20,7 @@ module CampfireBot
     attr_reader :campfire, :room, :config
   
     def initialize
-      @config   = YAML::load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))[BOT_ENVIRONMENT]
+      @config   = YAML::load(File.read("#{BOT_ROOT}/config.yml"))[BOT_ENVIRONMENT]
     end
   
     def connect
@@ -43,8 +44,8 @@ module CampfireBot
           # EventHanlder.handle_time(optional_arg = Time.now)
         
           # Run time-oriented events
-          PluginBase.registered_intervals.each        { |handler| handler.run }
-          PluginBase.registered_times.each_with_index { |handler, index| PluginBase.registered_times.delete_at(index) if handler.run }
+          Plugin.registered_intervals.each        { |handler| handler.run }
+          Plugin.registered_times.each_with_index { |handler, index| Plugin.registered_times.delete_at(index) if handler.run }
         
           sleep interval
         end
@@ -54,16 +55,21 @@ module CampfireBot
     private
   
     def load_plugins
-      Dir["#{File.dirname(__FILE__)}/plugins/*.rb"].each{|x| load x }
+      Dir["#{BOT_ROOT}/plugins/*.rb"].each{|x| load x }
+      
+      # And instantiate them
+      Plugin.registered_plugins.each_pair do |name, klass|
+        Plugin.registered_plugins[name] = klass.new
+      end
     end
   
     def handle_message(msg)
       puts
       puts msg.inspect
     
-      PluginBase.registered_commands.each { |handler| handler.run(msg) }
-      PluginBase.registered_speakers.each { |handler| handler.run(msg) }
-      PluginBase.registered_messages.each { |handler| handler.run(msg) }
+      Plugin.registered_commands.each { |handler| handler.run(msg) }
+      Plugin.registered_speakers.each { |handler| handler.run(msg) }
+      Plugin.registered_messages.each { |handler| handler.run(msg) }
     end
   end
 end

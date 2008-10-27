@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'hpricot'
 
-class Chuck < CampfireBot::Plugin::Base
+class Chuck < CampfireBot::Plugin
   on_command 'chuck', :chuck
   
   def chuck(msg)

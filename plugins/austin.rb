@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'hpricot'
 
-class Austin < PluginBase
+class Austin < CampfireBot::Plugin
   BASE_URL = 'http://www.imdb.com/character/ch0002425/quotes'
   
   on_command 'austin', :austin

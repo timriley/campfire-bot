@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'hpricot'
 
-class BeijingTally < CampfireBot::Plugin::Base
+class BeijingTally < CampfireBot::Plugin
   
   on_command 'tally', :tally
   

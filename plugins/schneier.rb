@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'hpricot'
 
-class Schneier < PluginBase
+class Schneier < CampfireBot::Plugin
   BASE_URL   = 'http://geekz.co.uk/schneierfacts/'
   
   on_command 'schneier', :schneier

@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'hpricot'
 
-class Quote < CampfireBot::Plugin::Base
+class Quote < CampfireBot::Plugin
   on_command 'quote', :quote
   
   def quote(msg)

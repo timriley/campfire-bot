@@ -11,7 +11,7 @@ Tempfile.class_eval do
   end
 end
 
-class Dilbert < CampfireBot::Plugin::Base
+class Dilbert < CampfireBot::Plugin
   BASE_URL   = 'http://dilbert.com/'
   START_DATE = Date.parse('1996-01-01')
   
