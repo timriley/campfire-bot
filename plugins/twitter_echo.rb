@@ -7,12 +7,12 @@ require 'htmlentities'
 # The workings of this plugin are based on http://github.com/paulca/twitter2campfire
 # Thanks to Paul Campbell and Contrast! <http://www.contrast.ie/>
 
-class TwitterEcho < PluginBase
+class TwitterEcho < CampfireBot::Plugin
   
   at_interval 2.minutes, :echo_tweets
   
   def initialize
-    @feed   = Bot.instance.config['twitter_feed']
+    @feed   = CampfireBot::Bot.instance.config['twitter_feed']
     @latest = Time.now
   end
   

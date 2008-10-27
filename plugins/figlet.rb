@@ -1,6 +1,6 @@
 require "#{BOT_ROOT}/lib/escape/escape"
 
-class Fun < PluginBase
+class Fun < CampfireBot::Plugin
   on_command    'figlet', :figlet
   
   def figlet(m)

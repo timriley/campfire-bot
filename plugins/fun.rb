@@ -1,6 +1,6 @@
-class Fun < PluginBase
+class Fun < CampfireBot::Plugin
   on_command    'say',              :say
-  on_message    Regexp.new("^#{Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
+  on_message    Regexp.new("^#{CampfireBot::Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
   on_message    /^(good morning|morning|m0ink).$/i, :greet
   # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it
