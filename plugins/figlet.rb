@@ -1,4 +1,4 @@
-require "#{BOT_ROOT}/lib/escape/escape"
+require "#{BOT_ROOT}/vendor/escape/escape"
 
 class Fun < CampfireBot::Plugin
   on_command    'figlet', :figlet
