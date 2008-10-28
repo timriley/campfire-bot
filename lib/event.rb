@@ -70,7 +70,7 @@ module CampfireBot
       handles :times
   
       def initialize(*args)
-        @last_run = Time.now
+        @last_run = ::Time.now
         super(*args)
       end
   
