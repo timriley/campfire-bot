@@ -75,13 +75,13 @@ module CampfireBot
       end
   
       def match?
-        @last_run < Time.now - @matcher
+        @last_run < ::Time.now - @matcher
       end
   
       def run(force = false)
         if match?
           Plugin.registered_plugins[@plugin].send(@method)
-          @last_run = Time.now
+          @last_run = ::Time.now
         else
           false
         end
@@ -97,7 +97,7 @@ module CampfireBot
       end
   
       def match?
-        @matcher <= Time.now && !@run
+        @matcher <= ::Time.now && !@run
       end
   
       def run(force = false)
