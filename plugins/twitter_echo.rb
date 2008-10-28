@@ -18,7 +18,7 @@ class TwitterEcho < CampfireBot::Plugin
   
   def echo_tweets(msg = nil)
     recent_tweets.reverse.each do |tweet|
-      speak("#{coder.decode(tweet.from)}: #{coder.decode(tweet.text)} #{tweet.link}")
+      speak("#{coder.decode(tweet.from)}: #{coder.decode(tweet.text)} #{tweet.link}") unless tweet.text =~ /^@/
     end
     @latest = latest_tweet.date   # next time, only print tweets newer than this
     @doc    = nil                 # reset the feed so that next time we can actually any new tweets
