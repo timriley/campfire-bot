@@ -5,6 +5,7 @@ development:
   nickname: Bot Name
   password: password
   twitter_feed: 'http://search.twitter.com/search.atom?q=from%3Atimriley+OR+from%3Ahughevans+OR+from%3Aschlick+OR+from%3Aseanodowd'
+  twitter_hide_replies: false
 production:
   site: campfire_subdomain_name
   room: Company Chat
@@ -12,3 +13,4 @@ production:
   nickname: Bot Name
   password: password
   twitter_feed: 'http://search.twitter.com/search.atom?q=from%3Atimriley+OR+from%3Ahughevans+OR+from%3Aschlick+OR+from%3Aseanodowd'
+  twitter_hide_replies: false
