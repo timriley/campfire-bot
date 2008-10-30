@@ -1,3 +1,5 @@
+- plugins need callbacks, like on_join, etc.
+
 - multi-room support
 
 - gem-ify the bot and have it provide an executable to generate an application directory 

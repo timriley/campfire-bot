@@ -31,6 +31,7 @@ module CampfireBot
       @campfire.login(@config['username'], @config['password'])
       @room = @campfire.find_room_by_name(@config['room'])
       @room.join
+      puts "Ready."
     end
   
     def run(interval = 5)
