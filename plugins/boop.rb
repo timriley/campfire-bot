@@ -1,23 +1,20 @@
 class Boop < CampfireBot::Plugin
   
-  # Markov chain implementation courtesy of http://rubyquiz.com/quiz74.html
+  # Markov chain implementation courtesy of http://blog.segment7.net/articles/2006/02/25/markov-chain
   
-  on_message /.*/,                :build_chains
+  on_message /.*/,                :listen
   on_command 'speak',             :random_chatter
   on_command 'prime_chains',      :load_transcripts
   
   on_command 'test',              :debug
   
   def initialize
-    @words = Hash.new
+    @phrases    = Hash.new { |hash, key| hash[key] = [] } # phrase => next-word possibilities
+    @word_count = 0
   end
   
-  def debug(msg)
-    p @words
-  end
-  
-  def build_chains(msg)
-    add_line(msg[:message])
+  def listen(msg)
+    add_words(msg[:message])
   end
   
   def random_chatter(msg)
@@ -29,74 +26,64 @@ class Boop < CampfireBot::Plugin
     
   end
   
-  # TODO strip tags, ignore images.
-  
   def load_transcripts(msg)
     speak("Filling my brain with transcripts...")
     bot.room.available_transcripts.each do |date|
       transcript = bot.room.transcript(date)
       transcript.each do |message|
         filtered_text = strip_messages(message)
-        add_line(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
+        add_words(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
         puts filtered_text.gsub(/([^\.])$/, '\1.') unless filtered_text.blank?
       end
     end
     speak("Primed!")
   end
   
-  protected
-  
-  # Building the chains
-  
-  def add_line(text)
-    wordlist = text.split
-    wordlist.each_with_index do |word, index|
-      add_word(word, wordlist[index + 1]) if index <= wordlist.size - 2
+  private
+    
+  def add_line(line)
+    words        = line.scan(/\S+/))
+    @word_count += words.length
+    
+    words.each_with_index do |word, index|
+      phrase = words[index, phrase_length]             # current phrase
+      @phrases[phrase] << words[index + phrase_length] # next possibility
     end
   end
   
-  def add_word(word, next_word)
-    @words[word] = Hash.new(0) if !@words[word]
-    @words[word][next_word] += 1
+  def generate_line
+    # our seed phrase
+    # phrase = words[0, phrase_length]
+    phrase = random_word
+
+    output = []
+
+    @max_words.times do
+      # grab all possibilities for our state
+      options = phrases[phrase]
+
+      # add the first word to our output and discard
+      output << phrase.shift
+
+      # select at random and add it to our phrase
+      phrase.push options[rand(options.length)]
+
+      # the last phrase of the input text will map to an empty array of
+      # possibilities so exit cleanly.
+      break if phrase.compact.empty? # all out of words
+    end
+
+    # print out our output
+    puts output.join(' ')
   end
-  
-  # Fetching from the chains
-  
+    
   def random_word
-    @words.keys.rand
+    @phrases.keys.rand.first
   end
   
-  def get_word(word)
-    return "" if !@words[word]
-    followers = @words[word]
-    sum = followers.inject(0) {|sum,kv| sum += kv[1]}
-    random = rand(sum)+1
-    partial_sum = 0
-    next_word = followers.find do |word, count|
-      partial_sum += count
-      partial_sum >= random
-    end.first
-    next_word
+  def phrase_length
+    1
   end
-  
-  # Composing sentences
-  
-  def get_sentences(count = 1, start_word = nil)
-    puts "get_sentences"
-    
-    word      = start_word || random_word
-    
-    puts "starting word is #{word}"
-    
-    sentences = ''
-    until sentences.count('.') == count
-      sentences << word << ' '
-      word = get_word(word)
-    end
-    sentences
-  end
-  
-  # Utility
   
   def strip_messages(msg)
     str = msg[:message].to_s
