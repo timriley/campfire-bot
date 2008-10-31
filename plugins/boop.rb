@@ -18,7 +18,7 @@ class Boop < CampfireBot::Plugin
   end
   
   def listen(msg)
-    add_words(msg[:message])
+    add_line(msg[:message])
   end
   
   def random_chatter(msg)
