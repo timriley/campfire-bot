@@ -1,3 +1,8 @@
+# TODO
+#
+# - convert/filter out HTML entities like &quot;
+# - do the right thing when a paste occurs (remove the 'view paste' but keep the content)
+
 class Boop < CampfireBot::Plugin
   
   # Markov chain implementation courtesy of http://blog.segment7.net/articles/2006/02/25/markov-chain
@@ -23,7 +28,7 @@ class Boop < CampfireBot::Plugin
   
   def random_chatter(msg)
     puts "random_chatter"
-    speak(get_sentences)
+    speak(generate_line)
   end
   
   def focused_chatter(msg)
@@ -33,14 +38,20 @@ class Boop < CampfireBot::Plugin
   def load_transcripts(msg)
     speak("Filling my brain with transcripts...")
     
-    bot.room.available_transcripts.each do |date|
+    puts "available transcripts - #{bot.room.available_transcripts.to_yaml}"
+    
+    bot.room.available_transcripts.to_a.each do |date|
+      puts "loading transcript #{date}"
+      
       transcript = bot.room.transcript(date)
       
       transcript.each do |message|
+        puts "message: #{message[:message]}"
+        
         filtered_text = strip_message(message)
         add_line(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
         
-        puts filtered_text.gsub(/([^\.])$/, '\1.') unless filtered_text.blank?
+        puts "ACCEPTED: " + filtered_text.gsub(/([^\.])$/, '\1.') unless filtered_text.blank?
       end
     end
     
@@ -62,13 +73,13 @@ class Boop < CampfireBot::Plugin
   def generate_line
     # our seed phrase
     # phrase = words[0, phrase_length]
-    phrase = random_word
+    phrase = [random_word]
 
     output = []
 
-    @max_words.times do
+    @word_count.times do
       # grab all possibilities for our state
-      options = phrases[phrase]
+      options = @phrases[phrase]
 
       # add the first word to our output and discard
       output << phrase.shift
@@ -81,8 +92,8 @@ class Boop < CampfireBot::Plugin
       break if phrase.compact.empty? # all out of words
     end
 
-    # print out our output
-    puts output.join(' ')
+    # return our output
+    output.join(' ')
   end
     
   def random_word
