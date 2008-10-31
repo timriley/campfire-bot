@@ -13,6 +13,10 @@ class Boop < CampfireBot::Plugin
     @word_count = 0
   end
   
+  def debug
+    p @phrases
+  end
+  
   def listen(msg)
     add_words(msg[:message])
   end
@@ -28,21 +32,25 @@ class Boop < CampfireBot::Plugin
   
   def load_transcripts(msg)
     speak("Filling my brain with transcripts...")
+    
     bot.room.available_transcripts.each do |date|
       transcript = bot.room.transcript(date)
+      
       transcript.each do |message|
-        filtered_text = strip_messages(message)
+        filtered_text = strip_message(message)
         add_words(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
+        
         puts filtered_text.gsub(/([^\.])$/, '\1.') unless filtered_text.blank?
       end
     end
+    
     speak("Primed!")
   end
   
   private
     
   def add_line(line)
-    words        = line.scan(/\S+/))
+    words        = line.scan(/\S+/)
     @word_count += words.length
     
     words.each_with_index do |word, index|
@@ -66,7 +74,7 @@ class Boop < CampfireBot::Plugin
       output << phrase.shift
 
       # select at random and add it to our phrase
-      phrase.push options[rand(options.length)]
+      phrase.push(options.rand)
 
       # the last phrase of the input text will map to an empty array of
       # possibilities so exit cleanly.
@@ -81,11 +89,12 @@ class Boop < CampfireBot::Plugin
     @phrases.keys.rand.first
   end
   
+  # amount of state (order-k)
   def phrase_length
     1
   end
   
-  def strip_messages(msg)
+  def strip_message(msg)
     str = msg[:message].to_s
     
     return '' if str.blank?
