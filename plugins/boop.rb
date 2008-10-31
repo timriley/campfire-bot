@@ -38,7 +38,7 @@ class Boop < CampfireBot::Plugin
       
       transcript.each do |message|
         filtered_text = strip_message(message)
-        add_words(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
+        add_line(filtered_text.gsub(/([^\.])$/, '\1.')) unless filtered_text.blank?
         
         puts filtered_text.gsub(/([^\.])$/, '\1.') unless filtered_text.blank?
       end
