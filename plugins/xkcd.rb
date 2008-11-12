@@ -11,7 +11,7 @@ Tempfile.class_eval do
   end
 end
 
-class Xkcd < PluginBase
+class Xkcd < CampfireBot::Plugin
   BASE_URL = 'http://xkcd.com/'
   
   on_command 'xkcd', :xkcd

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>shell_single_word (Escape)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File escape.rb, line 101</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">shell_single_word</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-constant">ShellEscaped</span>.<span class="ruby-identifier">new_no_dup</span>(<span class="ruby-value str">&quot;''&quot;</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-regexp re">%r{\A[0-9A-Za-z+,./:=@_-]+\z}</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>
+      <span class="ruby-constant">ShellEscaped</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">result</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-identifier">str</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/('+)|[^']+/</span>) {
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$1</span>
+          <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">%q{\'}</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;'#{$&amp;}'&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-constant">ShellEscaped</span>.<span class="ruby-identifier">new_no_dup</span>(<span class="ruby-identifier">result</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

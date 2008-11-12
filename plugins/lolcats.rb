@@ -11,7 +11,7 @@ Tempfile.class_eval do
   end
 end
 
-class LolCats < PluginBase
+class LolCats < CampfireBot::Plugin
   on_command 'lolcat', :lolcats
   
   def lolcats(msg)

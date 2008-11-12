@@ -1,3 +1,11 @@
+- need to catch timeout errors and do something sensible, like wait and retry the connection
+
+- need to catch no-network errors and return a sensible error message:
+
+/opt/local/lib/ruby/1.8/net/http.rb:560:in `initialize': Network is unreachable - connect(2) (Errno::ENETUNREACH)
+
+- plugins need callbacks, like on_join, bot_loaded, etc.
+
 - multi-room support
 
 - gem-ify the bot and have it provide an executable to generate an application directory 

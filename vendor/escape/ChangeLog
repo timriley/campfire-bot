@@ -1,0 +1,30 @@
+2007-02-28  Tanaka Akira  <akr@fsij.org>
+
+	* escape.rb: Escape::HTMLAttrValue defined.
+	  Escape.html_attr_value returns it.
+
+2007-02-27  Tanaka Akira  <akr@fsij.org>
+
+	* escape.rb: make StringWrapper into class.
+	  Escape::ShellEscaped, Escape::HTMLEscaped and Escape::PercentEncoded
+	  inherit it.
+
+2007-02-26  Tanaka Akira  <akr@fsij.org>
+
+	* escape.rb: Escape::ShellEscaped defined.
+	  Escape.shell_command and Escape.shell_single_word returns
+	  Escape::ShellEscaped object instead of a string.
+
+	* escape.rb: Escape::HTMLEscaped defined.
+	  Escape.html_text and Escape.html_attr_value returns
+	  Escape::HTMLEscaped object instead of a string.
+
+	* escape.rb: Escape::PercentEncoded defined.
+	  Escape.uri_segment, Escape.uri_path and Escape.html_form returns
+	  Escape::PercentEncoded object instead of a string.
+
+	* escape.rb: rename Escape.html_attr to Escape.html_attr_value.
+
+2007-01-05  Tanaka Akira  <akr@fsij.org>
+
+	* version 0.1 released.
