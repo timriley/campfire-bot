@@ -27,7 +27,7 @@ module CampfireBot
     def connect
       load_plugins
     
-      @campfire = Tinder::Campfire.new(@config['site'])
+      @campfire = Tinder::Campfire.new(@config['site'], :ssl => !!@config['use_ssl'])
       @campfire.login(@config['username'], @config['password'])
       @room = @campfire.find_room_by_name(@config['room'])
       @room.join

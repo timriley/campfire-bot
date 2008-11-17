@@ -1,5 +1,6 @@
 development:
   site: campfire_subdomain_name 
+  use_ssl: true
   room: Test
   username: foo@bar.com
   nickname: Bot Name
@@ -8,6 +9,7 @@ development:
   twitter_hide_replies: false
 production:
   site: campfire_subdomain_name
+  use_ssl: true
   room: Company Chat
   username: foo@bar.com
   nickname: Bot Name
