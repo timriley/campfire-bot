@@ -59,3 +59,8 @@
 - create a plugin that pulls in unfuddle ticket reports, eg. !unfuddle project_name active_tickets
 
 - modify the austin powers plugin to be a generic imdb quote puller. eg. !imdb austin_powers
+
+- provide a way to disable plugins for a given environment in config.yml, e.g. disabled_plugins: weather,twitter_echo
+
+- unit tests!
+
