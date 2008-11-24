@@ -1,4 +1,4 @@
-class Insult < PluginBase
+class Insult < CampfireBot::Plugin
   
   on_command 'insult', :insult
   

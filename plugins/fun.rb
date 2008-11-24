@@ -1,7 +1,7 @@
 class Fun < CampfireBot::Plugin
   on_command    'say',              :say
-  on_message    Regexp.new("^#{Bot.instance.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
-  on_message    Regexp.new("^(good morning|morning|m0ink|hello|hi|hey|whassup|what's up|yo|hola|ola|'sup|sup)(,)*\\s*(#{Bot.instance.config['nickname']}).*$", Regexp::IGNORECASE), :greet
+  on_message    Regexp.new("^#{bot.config['nickname']},\\s+(should|can|will|shall) (i|he|she|we|they) do it\\?", Regexp::IGNORECASE), :do_or_do_not
+  on_message    Regexp.new("^(good morning|morning|m0ink|hello|hi|hey|whassup|what's up|yo|hola|ola|'sup|sup)(,)*\\s*(#{bot.config['nickname']}).*$", Regexp::IGNORECASE), :greet
   on_message  /(how's it|how are|how're) (ya |you )*(going|doing|doin).*/, :howareya
   # on_speaker    'Tim R.',           :agree_with_tim
   # on_message    /undo it/i,         :do_it

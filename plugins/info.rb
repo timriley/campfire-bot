@@ -1,13 +1,13 @@
 require 'yaml'
 
-class Infobot < PluginBase
+class Infobot < CampfireBot::Plugin
   
   Infobot::DEFINE_REGEXP = /(no, )*(.+) is ([^\?]+)(?!\?)$/
   Infobot::RESPOND_REGEXP = /(what's|what is|who is|who's|where|where's|how's|how is) ([^\?]+)(?=\?)*/
   
   # if BOT_ENVIRONMENT == 'development'
-    on_message Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{RESPOND_REGEXP.source}", Regexp::IGNORECASE), :respond
-    on_message Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE), :define
+    on_message Regexp.new("^#{bot.config['nickname']},\\s+#{RESPOND_REGEXP.source}", Regexp::IGNORECASE), :respond
+    on_message Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE), :define
     on_command 'reload', :reload
   # end
   
@@ -35,7 +35,7 @@ class Infobot < PluginBase
     @facts ||= init()
     puts @facts
     puts msg[:message]
-    puts msg[:message] =~ Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE)
+    puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE)
     # puts @define_regexp
     puts $1, $2, $3
     @facts[$2.downcase] = $3

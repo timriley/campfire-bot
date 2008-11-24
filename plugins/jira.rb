@@ -2,7 +2,7 @@ require 'open-uri'
 require 'hpricot'
 require 'tempfile'
 
-class Jira < PluginBase
+class Jira < CampfireBot::Plugin
   
   at_interval 3.minutes, :fetch_jira
   on_command 'checkjira', :check_jira

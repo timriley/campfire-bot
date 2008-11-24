@@ -1,4 +1,4 @@
-class Excuse < PluginBase
+class Excuse < CampfireBot::Plugin
   
   on_command 'excuse', :excuse
   
