@@ -2,7 +2,7 @@
 # rest of the sytem plugins should be allowed. Should they only be allowed to operate in their own
 # sandbox, or reach into the list of registered plugins like this one does?
 
-class Help < PluginBase
+class Help < CampfireBot::Plugin
   on_command 'help', :help
     
   def help(msg)
