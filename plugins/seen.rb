@@ -4,7 +4,7 @@ class Seen < CampfireBot::Plugin
   SEEN_REGEXP = /(seen) ([^\?]+)(?=\?)*/
   
   on_message Regexp.new("#{ACTIVITY_REGEXP.source}", Regexp::IGNORECASE), :update
-  on_message Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE), :seen
+  on_message Regexp.new("^#{bot.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE), :seen
   on_command 'reload_seen', :reload
   
   def initialize
@@ -27,7 +27,7 @@ class Seen < CampfireBot::Plugin
     puts @seen
     puts msg[:message]
     
-    puts msg[:message] =~ Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE)
+    puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE)
     puts $1, $2
     found = false
     
