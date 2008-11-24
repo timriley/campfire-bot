@@ -2,6 +2,7 @@
 #
 # - convert/filter out HTML entities like &quot;
 # - add a callback to prime the chains when the bot is ready, and do this in a thread.
+# - when a link is posted in the channel, download the contents of the link and add that text to the chain
 
 class Boop < CampfireBot::Plugin
   
@@ -17,7 +18,12 @@ class Boop < CampfireBot::Plugin
   end
 
   def listen(msg)
-    add_line(msg[:message])
+    # experimental
+    if msg[:message] =~ /^https?:\/\/\S+$/
+      
+    else  
+      add_line(msg[:message])
+    end  
   end
   
   def random_chatter(msg)
