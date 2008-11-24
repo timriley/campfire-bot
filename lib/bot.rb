@@ -10,7 +10,8 @@ require "#{BOT_ROOT}/lib/plugin"
 # This requires my fork of tinder for the time being
 # gem sources -a http://gems.github.com
 # sudo gem install timriley-tinder
-require 'tinder'
+# require 'tinder'
+require '../tinder/lib/tinder'
 
 module CampfireBot
   class Bot
@@ -65,10 +66,16 @@ module CampfireBot
     private
   
     def load_plugins
-      Dir["#{BOT_ROOT}/plugins/*.rb"].each{|x| load x }
+      Dir["#{BOT_ROOT}/plugins/*.rb"].each do |x| 
+        # skip disabled plugins
+        if @config['disable_plugins'].select{|name| x.include?(name)}.count == 0
+          load x
+        end
+      end
       
       # And instantiate them
       Plugin.registered_plugins.each_pair do |name, klass|
+        puts "loading plugin: #{name}"
         Plugin.registered_plugins[name] = klass.new
       end
     end
