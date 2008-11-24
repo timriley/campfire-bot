@@ -1,50 +1,27 @@
-require 'yaml'
-
-class Seen < PluginBase
+# Courtesy of joshwand (http://github.com/joshwand)
+class Seen < CampfireBot::Plugin
+  ACTIVITY_REGEXP = /^(.*)$/
+  SEEN_REGEXP = /(seen) ([^\?]+)(?=\?)*/
   
-  Seen::ACTIVITY_REGEXP = /^(.*)$/
-  Seen::SEEN_REGEXP = /(seen) ([^\?]+)(?=\?)*/
-  
-  # if BOT_ENVIRONMENT == 'development'
-    on_message Regexp.new("#{ACTIVITY_REGEXP.source}", Regexp::IGNORECASE), :update
-    on_message Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE), :seen
-    on_command 'reload', :reload
-  # end
+  on_message Regexp.new("#{ACTIVITY_REGEXP.source}", Regexp::IGNORECASE), :update
+  on_message Regexp.new("^#{bot.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE), :seen
+  on_command 'reload_seen', :reload
   
   def initialize
-    puts "entering initialize()"
-    
+    @data_file  = File.join(BOT_ROOT, 'tmp', 'seen.yml')
+    @seen       = YAML::load(File.read(@data_file)) rescue {}
   end
   
   def update(msg)
-    puts "entering update()"
-    @seen ||= init()
-
-    # puts msg[:message]
-    # puts msg[:person]
-    # puts msg[:user_id]
-
-    puts msg[:message] =~ ACTIVITY_REGEXP
-    puts $1, $2, $3
-
     left_room = (msg[:message] == "has left the room " ? true : false)
-    
-    @seen[msg[:person]] = {:time => Time.now(), :left => left_room}
-    puts @seen[msg[:person]]
-
-    File.open(File.join(File.dirname(__FILE__), 'seen.yml'), 'w') do |out|
+    @seen[msg[:person]] = {:time => Time.now, :left => left_room}
+ 
+    File.open(@data_file, 'w') do |out|
       YAML.dump(@seen, out)
     end
   end
   
   def seen(msg)
-    puts 'entering seen()'
-    @seen ||= init()
-    puts @seen
-    puts msg[:message]
-    
-    puts msg[:message] =~ Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE)
-    puts $1, $2
     found = false
     
     if !$2.nil?
@@ -66,14 +43,9 @@ class Seen < PluginBase
     end
   end
   
-  def init
-    puts "entering init()"
-    YAML::load(File.read(File.join(File.dirname(__FILE__), 'seen.yml')))
-  end
-  
   def reload(msg)
-    @facts = init()
-    speak("ok, reloaded #{@facts.size} seen db")
+    @seen = {}
+    speak("ok, reloaded seen db")
   end
   
   protected
@@ -87,7 +59,7 @@ class Seen < PluginBase
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     distance_in_minutes = (((to_time - from_time).abs)/60).round
     distance_in_seconds = ((to_time - from_time).abs).round
-
+ 
     case distance_in_minutes
       when 0..1
         return (distance_in_minutes == 0) ? 'less than a minute' : '1 minute' unless include_seconds
@@ -99,7 +71,7 @@ class Seen < PluginBase
           when 40..59 then 'less than a minute'
           else             '1 minute'
         end
-
+ 
         when 2..44           then "#{distance_in_minutes} minutes"
         when 45..89          then 'about 1 hour'
         when 90..1439        then "about #{(distance_in_minutes.to_f / 60.0).round} hours"
@@ -111,5 +83,4 @@ class Seen < PluginBase
         else                      "over #{(distance_in_minutes / 525600).round} years"
     end
   end
-  
 end

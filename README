@@ -5,8 +5,9 @@ It aims to be multi-purpose and extensible.
  - Tim Riley <tim at openmonkey dot com>
  
 Requirements:
- 
+
 rubygems
+timriley-tinder
 hpricot
 mime-types
 activesupport 
@@ -17,6 +18,6 @@ in config.yml
 
 Running:
 
-Run bot.rb with the environment name as the argument
+Run script/bot with the environment name as the argument
 
-./bot.rb development
+script/bot.rb development

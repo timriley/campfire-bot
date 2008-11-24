@@ -1,10 +1,42 @@
+- add chronic integration for interval-based events: at_time("every day at 9am", :method_name)
+
+- per-plugin config files (inside a config-specific dir) - best not to pollute a single YAML file.
+
+- get it to work with the newest version of mechanize.
+
+/opt/local/lib/ruby/gems/1.8/gems/timriley-tinder-1.1.9/lib/tinder/mechanize_ext.rb:6: undefined method `set_headers' for class `WWW::Mechanize' (NameError)
+	from /opt/local/lib/ruby/vendor_ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+	from /opt/local/lib/ruby/vendor_ruby/1.8/rubygems/custom_require.rb:27:in `require'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:510:in `require'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:355:in `new_constants_in'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:510:in `require'
+	from /opt/local/lib/ruby/gems/1.8/gems/timriley-tinder-1.1.9/lib/tinder.rb:10
+	from /opt/local/lib/ruby/gems/1.8/gems/timriley-tinder-1.1.9/lib/tinder.rb:10:in `each'
+	from /opt/local/lib/ruby/gems/1.8/gems/timriley-tinder-1.1.9/lib/tinder.rb:10
+	from /opt/local/lib/ruby/vendor_ruby/1.8/rubygems/custom_require.rb:32:in `gem_original_require'
+	from /opt/local/lib/ruby/vendor_ruby/1.8/rubygems/custom_require.rb:32:in `require'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:510:in `require'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:355:in `new_constants_in'
+	from /opt/local/lib/ruby/gems/1.8/gems/activesupport-2.1.2/lib/active_support/dependencies.rb:510:in `require'
+	from ./script/../lib/bot.rb:13
+	from ./script/bot:7:in `require'
+	from ./script/bot:7
+
+
+- need flood control for bot plugins
+
 - need to catch timeout errors and do something sensible, like wait and retry the connection
+
+  http://www.google.com/search?q=ruby%20rescue%20Timeout::Error
+  http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/136555
+  http://jerith.livejournal.com/40063.html
+  http://rails.lighthouseapp.com/projects/8994/tickets/6-patch-activeresource-connection-should-rescue-from-timeout-error
 
 - need to catch no-network errors and return a sensible error message:
 
 /opt/local/lib/ruby/1.8/net/http.rb:560:in `initialize': Network is unreachable - connect(2) (Errno::ENETUNREACH)
 
-- plugins need callbacks, like on_join, bot_loaded, etc.
+- plugins need callbacks, like on_join, bot_loaded, etc. Especially one that is run whenever control+c is caught (for plugins to clean up)
 
 - multi-room support
 
