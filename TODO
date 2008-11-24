@@ -1,3 +1,7 @@
+- add chronic integration for interval-based events: at_time("every day at 9am", :method_name)
+
+- per-plugin config files (inside a config-specific dir) - best not to pollute a single YAML file.
+
 - get it to work with the newest version of mechanize.
 
 /opt/local/lib/ruby/gems/1.8/gems/timriley-tinder-1.1.9/lib/tinder/mechanize_ext.rb:6: undefined method `set_headers' for class `WWW::Mechanize' (NameError)
@@ -23,11 +27,16 @@
 
 - need to catch timeout errors and do something sensible, like wait and retry the connection
 
+  http://www.google.com/search?q=ruby%20rescue%20Timeout::Error
+  http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/136555
+  http://jerith.livejournal.com/40063.html
+  http://rails.lighthouseapp.com/projects/8994/tickets/6-patch-activeresource-connection-should-rescue-from-timeout-error
+
 - need to catch no-network errors and return a sensible error message:
 
 /opt/local/lib/ruby/1.8/net/http.rb:560:in `initialize': Network is unreachable - connect(2) (Errno::ENETUNREACH)
 
-- plugins need callbacks, like on_join, bot_loaded, etc.
+- plugins need callbacks, like on_join, bot_loaded, etc. Especially one that is run whenever control+c is caught (for plugins to clean up)
 
 - multi-room support
 
