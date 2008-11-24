@@ -4,13 +4,15 @@ It aims to be multi-purpose and extensible.
 
  - Tim Riley <tim at openmonkey dot com>
  
-Requirements:
+Dependencies:
 
 rubygems
 timriley-tinder
 hpricot
 mime-types
-activesupport 
+activesupport
+htmlentities
+yahoo-weather
 
 Configuration: 
 
