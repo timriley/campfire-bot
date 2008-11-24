@@ -38,7 +38,21 @@ class Insult < PluginBase
     swag-bellied dizzy-eyed gorbellied weedy reeky measled spur-galled mangled
     impertinent bootless toad-spotted hasty-witted horn-beat yeasty
     imp-bladdereddle-headed boil-brained tottering hedge-born hugger-muggered 
-    elf-skinned)
+    elf-skinned
+    
+    artless bawdy beslubbering bootless churlish cockered clouted craven currish dankish
+    dissembling droning errant fawning fobbing froward gleeking goatish gorbellied
+    impertinent infectious jarring loggerheaded lumpish mammering mangled mewling paunchy
+    pribbling puking puny quailing rank reeky roguish ruttish saucy spleeny spongy surly
+    tottering unmuzzled vain venomed villainous warped wayward weedy yeasty base-court
+    bat-fowling beef-witted beetle-headed boil-brained clapper-clawed clay-brained
+    common-kissing crook-pated dismal-dreaming dizzy-eyed doghearted dread-bolted
+    earth-vexing elf-skinned fat-kidneyed flap-mouthed fly-bitten folly-fallen fool-born
+    full-gorged guts-griping half-faced hasty-witted hedge-born hell-hated idle-headed
+    ill-breeding ill-nurtured knotty-pated milk-livered motley-minded onion-eyed
+    plume-plucked pottle-deep pox-marked reeling-ripe rough-hewn rude-growing rump-fed
+    shard-borne sheep-biting spur-galled swag-bellied tardy-gaited tickle-brained
+    toad-spotted urchin-snouted weather-bitten)
     
     adjectives[rand(adjectives.size)]
     
@@ -47,7 +61,7 @@ class Insult < PluginBase
   def amount()
     amounts = %w(accumulation bucket coagulation enema-bucketful gob half-mouthful
      heap mass mound petrification pile puddle stack thimbleful tongueful
-     ooze quart bag plate ass-full assload)
+     ooze quart bag plate ass-full assload load)
      
      amounts[rand(amounts.size)]
     
@@ -63,7 +77,7 @@ class Insult < PluginBase
     snake|snot eel|ooze slurpee-backwash toxic|waste Stimpy-drool
     poopy poop craptacular|carpet|droppings cold|sores warts)
     
-    nouns[rand(nouns.size)].sub("|", " ")
+    nouns[rand(nouns.size)].gsub("|", " ")
     
     
   end
