@@ -8,12 +8,11 @@ class Seen < CampfireBot::Plugin
   on_command 'reload_seen', :reload
   
   def initialize
-    @data_file = File.join(BOT_ROOT, 'tmp', 'seen.yml')
+    @data_file  = File.join(BOT_ROOT, 'tmp', 'seen.yml')
+    @seen       = YAML::load(File.read(@data_file)) rescue {}
   end
   
   def update(msg)
-    @seen ||= init
- 
     left_room = (msg[:message] == "has left the room " ? true : false)
     @seen[msg[:person]] = {:time => Time.now, :left => left_room}
  
@@ -23,12 +22,6 @@ class Seen < CampfireBot::Plugin
   end
   
   def seen(msg)
-    @seen ||= init
-    puts @seen
-    puts msg[:message]
-    
-    puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE)
-    puts $1, $2
     found = false
     
     if !$2.nil?
@@ -51,15 +44,11 @@ class Seen < CampfireBot::Plugin
   end
   
   def reload(msg)
-    @facts = init
-    speak("ok, reloaded #{@facts.size} seen db")
+    @seen = {}
+    speak("ok, reloaded seen db")
   end
   
   protected
-  
-  def init
-    YAML::load(File.read(@data_file))
-  end
   
   def time_ago_in_words(from_time, include_seconds = false)
     distance_of_time_in_words(from_time, Time.now, include_seconds)
