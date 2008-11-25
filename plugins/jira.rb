@@ -6,16 +6,14 @@ class Jira < CampfireBot::Plugin
   
   at_interval 3.minutes, :fetch_jira
   on_command 'checkjira', :check_jira
-  
-  JIRA_URL = "http://oz/jira/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?&created%3Aprevious=-1w&pid=10213&pid=10170&pid=10171&pid=10190&sorter/field=created&sorter/order=DESC&os_username=pimconfuser&os_password=Ganv0nma"
-    
+
   def fetch_jira(msg = nil)
     @last_checked ||= 10.minutes.ago
     issuecount = 0
     
     puts "checking jira for new issues..."
     begin
-      xmldata = open(JIRA_URL).read
+      xmldata = open(bot.config['jira_url']).read
     
       # puts xmldata
 
