@@ -10,6 +10,7 @@ class Basecamp < CampfireBot::Plugin
     @domain     = @writeboard.split(/\/+/)[1]
     @username   = bot.config['basecamp_username']
     @password   = bot.config['basecamp_password']
+    @ssl        = !!bot.config['basecamp_use_ssl']
   end
   
   def writeboard(msg)
@@ -21,12 +22,10 @@ class Basecamp < CampfireBot::Plugin
   # TODO escape stuff here. output = `#{Escape.shell_command(['figlet', '--', m[:message]])}`
   def get_contents
     # Prime the cookie jar: log in.
-    basecamp_login      = `curl -c #{@cookie_jar} -b #{@cookie_jar} -d "user_name=#{@username}&password=#{@password}" -L #{@domain}/login/authenticate`
+    basecamp_login      = `curl -c #{@cookie_jar} -b #{@cookie_jar} -d "user_name=#{@username}&password=#{@password}" -L http#{'s' if @ssl}://#{@domain}/login/authenticate`
     
     # Now fetch the contents of the writeboard redirect page
     writeboard_redir    = `curl -c #{@cookie_jar} -b #{@cookie_jar} -L #{@writeboard}`
-    
-    p writeboard_redir
     
     # Now simulate the javascripted login to the writeboard site
     redir_form          = Hpricot(writeboard_redir).search('form').first
