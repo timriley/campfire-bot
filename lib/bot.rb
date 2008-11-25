@@ -29,9 +29,8 @@ module CampfireBot
     
       if @config['guesturl']
         baseurl, guest_token = @config['guesturl'].split(/.com\//)
-        @campfire = Tinder::Campfire.new(@config['site'], :guesturl => @config['guesturl'], :ssl => !!@config['ssl'])
-        roomid    = @campfire.guestlogin(@config['guesturl'], @config['nickname'])
-        @room     = Tinder::Room.new(@campfire, roomid, @config['room'])
+        @campfire = Tinder::Campfire.new(@config['site'], :ssl => !!@config['ssl'])
+        @room    = @campfire.find_room_by_guest_hash(guest_token, @config['nickname'])
       else
         @campfire = Tinder::Campfire.new(@config['site'], :ssl => !!@config['use_ssl'])
         @campfire.login(@config['username'], @config['password'])
