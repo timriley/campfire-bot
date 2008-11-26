@@ -31,8 +31,9 @@ class Jira < CampfireBot::Plugin
          title = ele.elements['title'].text
          reporter = ele.elements['reporter'].text
          type = ele.elements['type'].text
-         speak("#{type} - #{title} - #{link} - reported by #{reporter}")
-         puts "#{type} - #{title} - #{link} - reported by #{reporter}"
+         priority = ele.elements['priority'].text
+         speak("#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}")
+         puts "#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}"
         end
       end
 
