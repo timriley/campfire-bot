@@ -24,11 +24,11 @@ class LolCats < CampfireBot::Plugin
     file.flush
     
     # Upload it
-    upload(file.path)
+    msg.upload(file.path)
     
     # And remove the tempfile
     file.close!
   rescue => e
-    speak e
+    msg.speak e
   end
 end

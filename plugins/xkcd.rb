@@ -35,8 +35,8 @@ class Xkcd < CampfireBot::Plugin
     file.flush
     
     # Upload it
-    upload(file.path)
-    speak(comic['title'])
+    msg.upload(file.path)
+    msg.speak(comic['title'])
     
     # And remove the tempfile
     file.close!

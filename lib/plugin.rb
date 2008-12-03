@@ -54,21 +54,5 @@ module CampfireBot
         end
       end
     end
-
-    protected
-
-    # Shortcuts to access the room
-
-    def speak(words)
-      CampfireBot::Bot.instance.room.speak(words)
-    end
-
-    def paste(words)
-      CampfireBot::Bot.instance.room.paste(words)
-    end
-
-    def upload(file_path)
-      CampfireBot::Bot.instance.room.upload(file_path)
-    end
   end
 end

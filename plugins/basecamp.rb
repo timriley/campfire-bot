@@ -14,7 +14,7 @@ class Basecamp < CampfireBot::Plugin
   end
   
   def writeboard(msg)
-    paste get_contents
+    msg.paste get_contents
   end
   
   private
