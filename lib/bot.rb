@@ -22,8 +22,9 @@ module CampfireBot
     attr_reader :campfire, :rooms, :config
   
     def initialize
-      @config = YAML::load(File.read("#{BOT_ROOT}/config.yml"))[BOT_ENVIRONMENT]
-      @rooms  = {}
+      @timeouts = 0
+      @config   = YAML::load(File.read("#{BOT_ROOT}/config.yml"))[BOT_ENVIRONMENT]
+      @rooms    = {}
     end
   
     def connect
@@ -35,20 +36,33 @@ module CampfireBot
       catch(:stop_listening) do
         trap('INT') { throw :stop_listening }
         loop do
-          @rooms.each_pair do |room_name, room|
-            room.ping
-            room.listen.each { |raw_msg| handle_message(CampfireBot::Message.new(raw_msg.merge({:room => room}))) }
+          begin
+            @rooms.each_pair do |room_name, room|
+              room.ping
+              room.listen.each { |raw_msg| handle_message(CampfireBot::Message.new(raw_msg.merge({:room => room}))) }
+              # I assume if we reach here, all the network-related activity has occured successfully
+              # and that we're outside of the retry-cycle
+              @timeouts = 0
         
-            # Here's how I want it to look
-            # @room.listen.each { |m| EventHandler.handle_message(m) }
-            # EventHanlder.handle_time(optional_arg = Time.now)
+              # Here's how I want it to look
+              # @room.listen.each { |m| EventHandler.handle_message(m) }
+              # EventHanlder.handle_time(optional_arg = Time.now)
         
-            # Run time-oriented events
-            Plugin.registered_intervals.each        { |handler| handler.run }
-            Plugin.registered_times.each_with_index { |handler, index| Plugin.registered_times.delete_at(index) if handler.run }
+              # Run time-oriented events
+              Plugin.registered_intervals.each        { |handler| handler.run }
+              Plugin.registered_times.each_with_index { |handler, index| Plugin.registered_times.delete_at(index) if handler.run }
+            end
+        
+            sleep interval
+          rescue Timeout::Error => e
+            if @timeouts < 5
+              sleep(5 * @timeouts)
+              @timeouts += 1
+              retry
+            end
+          else
+            raise e
           end
-        
-          sleep interval
         end
       end
     end
