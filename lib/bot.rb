@@ -14,6 +14,9 @@ require "#{BOT_ROOT}/lib/plugin"
 require 'tinder'
 
 module CampfireBot
+  
+  
+  
   class Bot
     # this is necessary so the room and campfire objects can be accessed by plugins.
     include Singleton
@@ -59,9 +62,9 @@ module CampfireBot
               sleep(5 * @timeouts)
               @timeouts += 1
               retry
+            else
+              raise e.message
             end
-          else
-            raise e
           end
         end
       end
