@@ -22,23 +22,13 @@
 	from ./script/bot:7:in `require'
 	from ./script/bot:7
 
-
 - need flood control for bot plugins
-
-- need to catch timeout errors and do something sensible, like wait and retry the connection
-
-  http://www.google.com/search?q=ruby%20rescue%20Timeout::Error
-  http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/136555
-  http://jerith.livejournal.com/40063.html
-  http://rails.lighthouseapp.com/projects/8994/tickets/6-patch-activeresource-connection-should-rescue-from-timeout-error
 
 - need to catch no-network errors and return a sensible error message:
 
 /opt/local/lib/ruby/1.8/net/http.rb:560:in `initialize': Network is unreachable - connect(2) (Errno::ENETUNREACH)
 
 - plugins need callbacks, like on_join, bot_loaded, etc. Especially one that is run whenever control+c is caught (for plugins to clean up)
-
-- multi-room support
 
 - gem-ify the bot and have it provide an executable to generate an application directory 
   like rails
@@ -59,3 +49,14 @@
 - create a plugin that pulls in unfuddle ticket reports, eg. !unfuddle project_name active_tickets
 
 - modify the austin powers plugin to be a generic imdb quote puller. eg. !imdb austin_powers
+
+DONE
+
+- multi-room support
+
+- need to catch timeout errors and do something sensible, like wait and retry the connection
+
+  http://www.google.com/search?q=ruby%20rescue%20Timeout::Error
+  http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/136555
+  http://jerith.livejournal.com/40063.html
+  http://rails.lighthouseapp.com/projects/8994/tickets/6-patch-activeresource-connection-should-rescue-from-timeout-error

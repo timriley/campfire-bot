@@ -14,9 +14,6 @@ require "#{BOT_ROOT}/lib/plugin"
 require 'tinder'
 
 module CampfireBot
-  
-  
-  
   class Bot
     # this is necessary so the room and campfire objects can be accessed by plugins.
     include Singleton
