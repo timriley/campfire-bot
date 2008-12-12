@@ -20,9 +20,7 @@ h3. Dependencies:
 
 h3. Configuration
 
-Configuration: 
-
-in config.yml
+Create a @config.yml@ in the root of the source directory. Use @config.example.yml@ as an example.
 
 h2. Usage
 
