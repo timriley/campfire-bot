@@ -8,7 +8,7 @@ class Seen < CampfireBot::Plugin
   on_command 'reload_seen', :reload
   
   def initialize
-    @data_file  = File.join(BOT_ROOT, 'tmp', 'seen.yml')
+    @data_file  = File.join(BOT_ROOT, 'tmp', "seen-#{BOT_ENVIRONMENT}.yml")
     @seen       = YAML::load(File.read(@data_file)) rescue {}
   end
   
