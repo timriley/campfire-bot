@@ -64,3 +64,5 @@
 
 - plugin: svn commit notification (multiple repos)
 
+- alternative addressing syntax - (!command)
+
