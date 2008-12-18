@@ -39,6 +39,7 @@ module CampfireBot
       
       @room.join
       puts "Ready."
+      STDOUT.flush
     end
   
     def run(interval = 5)
@@ -55,7 +56,7 @@ module CampfireBot
           # Run time-oriented events
           Plugin.registered_intervals.each        { |handler| handler.run }
           Plugin.registered_times.each_with_index { |handler, index| Plugin.registered_times.delete_at(index) if handler.run }
-        
+          STDOUT.flush
           sleep interval
         end
       end
@@ -74,6 +75,7 @@ module CampfireBot
       # And instantiate them
       Plugin.registered_plugins.each_pair do |name, klass|
         puts "loading plugin: #{name}"
+        STDOUT.flush
         Plugin.registered_plugins[name] = klass.new
       end
     end
