@@ -8,17 +8,17 @@ class Infobot < CampfireBot::Plugin
   # if BOT_ENVIRONMENT == 'development'
     on_message Regexp.new("^#{bot.config['nickname']},\\s+#{RESPOND_REGEXP.source}", Regexp::IGNORECASE), :respond
     on_message Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE), :define
-    on_command 'reload', :reload
+    on_command 'reload_facts', :reload
   # end
   
   def initialize
-    puts "entering initialize()"
+    # puts "entering initialize()"
     
   end
   
   def respond(msg)
-    puts "entering respond()"
-    @facts ||= init()
+    # puts "entering respond()"
+    @facts = init()
     puts msg[:message]
     puts msg[:message] =~ RESPOND_REGEXP # Regexp.new("^#{Bot.instance.config['nickname']},\\s+#{RESPOND_REGEXP.source}", Regexp::IGNORECASE)
     puts $1, $2, $3
@@ -31,13 +31,13 @@ class Infobot < CampfireBot::Plugin
   end
   
   def define(msg)
-    puts 'entering define()'
-    @facts ||= init()
-    puts @facts
-    puts msg[:message]
-    puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE)
+    # puts 'entering define()'
+    @facts = init()
+    # puts @facts
+    # puts msg[:message]
+    # puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE)
     # puts @define_regexp
-    puts $1, $2, $3
+    # puts $1, $2, $3
     @facts[$2.downcase] = $3
     speak("Okay, #{$2} is now #{$3}")
     File.open(File.join(File.dirname(__FILE__), 'infobot.yml'), 'w') do |out|
@@ -46,8 +46,8 @@ class Infobot < CampfireBot::Plugin
   end
   
   def init
-    puts "entering init()"
-    YAML::load(File.read(File.join(File.dirname(__FILE__), 'infobot.yml')))
+    # puts "entering init()"
+    YAML::load(File.read(File.join(BOT_ROOT, 'tmp', 'infobot.yml')))
   end
   
   def reload(msg)
