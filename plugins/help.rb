@@ -7,8 +7,7 @@ class Help < CampfireBot::Plugin
     
   def help(msg)
     commands = CampfireBot::Plugin.registered_commands.map { |command| command.matcher.to_s + " " }
- 
-    speak("To address me, type \"#{bot.config['nickname']},\" and a command. \n
+    msg.speak("To address me, type \"#{bot.config['nickname']},\" and a command. \n
     Available commands: #{commands}")
   end  
 end

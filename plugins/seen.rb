@@ -31,13 +31,13 @@ class Seen < CampfireBot::Plugin
         if person.downcase.include?(first_name.downcase)
           time_ago = time_ago_in_words(seenat[:time])
           left = seenat[:left] ? "leaving the room " : ""
-          speak("#{person} was last seen #{left}#{time_ago} ago")
+          msg.speak("#{person} was last seen #{left}#{time_ago} ago")
           found = true
         end
       end
       
       if !found
-        speak("Sorry, I haven't seen #{first_name}.")
+        msg.speak("Sorry, I haven't seen #{first_name}.")
       end
       
     end
@@ -45,7 +45,7 @@ class Seen < CampfireBot::Plugin
   
   def reload(msg)
     @seen = {}
-    speak("ok, reloaded seen db")
+    msg.speak("ok, reloaded seen db")
   end
   
   protected

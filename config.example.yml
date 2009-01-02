@@ -1,7 +1,9 @@
 development:
   site: campfire_subdomain_name 
   use_ssl: true
-  room: Test
+  rooms:
+  - Main room
+  - Other room
   username: foo@bar.com
   nickname: Bot Name
   password: password
@@ -13,7 +15,8 @@ development:
 production:
   site: campfire_subdomain_name
   use_ssl: true
-  room: Company Chat
+  rooms:
+  - Company Chat
   username: foo@bar.com
   nickname: Bot Name
   password: password

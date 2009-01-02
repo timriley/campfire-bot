@@ -15,9 +15,9 @@ class Schneier < CampfireBot::Plugin
     else
       fetch_quote
     end
-    speak quote
+    msg.speak quote
   rescue => e
-    speak e
+    msg.speak e
   end
   
   private

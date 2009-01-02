@@ -21,11 +21,11 @@ class Quote < CampfireBot::Plugin
       # HPricot RDoc: http://code.whytheluckystiff.net/hpricot/
       doc = Hpricot(response)
 
-      speak((doc/"*/item/description").inner_html.gsub(/<\/?[^>]*>/,"").gsub(/\s+/," ").gsub(/\&quote;/,"'").gsub(/\&[\#|\w]\w+\;/,"").gsub(/\#39\;/,"'"))
-      speak((doc/"*/item/title").inner_html)
+      msg.speak((doc/"*/item/description").inner_html.gsub(/<\/?[^>]*>/,"").gsub(/\s+/," ").gsub(/\&quote;/,"'").gsub(/\&[\#|\w]\w+\;/,"").gsub(/\#39\;/,"'"))
+      msg.speak((doc/"*/item/title").inner_html)
 
     rescue Exception => e
-      speak(e, "\n")
+      msg.speak(e, "\n")
     end
   end
 end

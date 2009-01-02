@@ -1,0 +1,39 @@
+h1. Campfire Bot
+
+This is an under-heavy-development bot for the Campfire web-based chat system.
+
+It aims to be multi-purpose and extensible.
+
+h2. Installation
+
+h3. Download
+
+Download the source from "github":http://github.com/timriley/campfire-bot
+ 
+h3. Dependencies:
+
+* rubygems
+* timriley-tinder (http://github.com/timriley/tinder)
+* hpricot
+* mime-types
+* activesupport 
+
+h3. Configuration
+
+Create a @config.yml@ in the root of the source directory. Use @config.example.yml@ as an example.
+
+h2. Usage
+
+To run the bot, run @script/bot@ with the environment name as the argument:
+
+  script/bot.rb development
+
+h2. Authors
+
+Tim Riley - "github":http://github.com/timriley | "www":http://openmonkey.com/ | "email":mailto:tim@openmonkey.com
+
+h3. Contributors
+
+* Josh Wand - "github":http://github.com/joshwand
+* Hugh Evans - "github":http://github.com/artpop
+* Sean O'Dowd - "github":http://github.com/seanodowd

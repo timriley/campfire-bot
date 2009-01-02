@@ -28,9 +28,9 @@ class Chuck < CampfireBot::Plugin
       end
 
       # Select a random entry in the array, clean the string and output it  
-      speak(fact_file[rand(fact_file.size)].gsub(/<\/?[^>]*>/,"").gsub(/\s+/," ").gsub(/\&quote;/,"'").gsub(/\&[\#|\w]\w+\;/,""))
+      msg.speak(fact_file[rand(fact_file.size)].gsub(/<\/?[^>]*>/,"").gsub(/\s+/," ").gsub(/\&quote;/,"'").gsub(/\&[\#|\w]\w+\;/,""))
     rescue Exception => e
-      speak(e, "\n")
+      msg.speak(e, "\n")
     end
   end
 end

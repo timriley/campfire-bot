@@ -17,6 +17,6 @@ class Weather < CampfireBot::Plugin
     
     data = YahooWeather::Client.new.lookup_location(city, 'c')
     
-    speak("#{data.title} - #{data.condition.text}, #{data.condition.temp} deg C (high #{data.forecasts.first.high}, low #{data.forecasts.first.low})")
+    msg.speak("#{data.title} - #{data.condition.text}, #{data.condition.temp} deg C (high #{data.forecasts.first.high}, low #{data.forecasts.first.low})")
   end
 end

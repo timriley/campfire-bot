@@ -18,7 +18,7 @@ class BeijingTally < CampfireBot::Plugin
       output += "#{strip_tags_or_zero(cells[-2].inner_html).rjust(3)}\n"  # total
     end
     
-    paste(output)
+    msg.paste(output)
   end
   
   private

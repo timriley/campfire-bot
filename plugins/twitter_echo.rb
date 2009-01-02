@@ -12,15 +12,14 @@ class TwitterEcho < CampfireBot::Plugin
   at_interval 2.minutes, :echo_tweets
   
   def initialize
-    @feed         = CampfireBot::Bot.instance.config['twitter_feed']
-    @hide_replies = CampfireBot::Bot.instance.config.key?('twitter_hide_replies') ?
-                      CampfireBot::Bot.instance.config['twitter_hide_replies'] : false
+    @feed         = bot.config['twitter_feed']
+    @hide_replies = bot.config.key?('twitter_hide_replies') ? bot.config['twitter_hide_replies'] : false
     @latest       = Time.now
   end
   
   def echo_tweets(msg = nil)
     recent_tweets.reverse.each do |tweet|
-      speak("#{coder.decode(tweet.from)}: #{coder.decode(tweet.text)} #{tweet.link}") unless (tweet.text =~ /^@/ && @hide_replies)
+      msg.speak("#{coder.decode(tweet.from)}: #{coder.decode(tweet.text)} #{tweet.link}") unless (tweet.text =~ /^@/ && @hide_replies)
     end
     @latest = latest_tweet.date   # next time, only print tweets newer than this
     @doc    = nil                 # reset the feed so that next time we can actually any new tweets

@@ -22,7 +22,7 @@ class Boop < CampfireBot::Plugin
   
   def random_chatter(msg)
     puts "random_chatter"
-    speak(generate_line)
+    msg.speak(generate_line)
   end
   
   def focused_chatter(msg)
@@ -30,7 +30,7 @@ class Boop < CampfireBot::Plugin
   end
   
   def load_transcripts(msg)
-    speak("Filling my brain with transcripts...")
+    msg.speak("Filling my brain with transcripts...")
     
     puts "available transcripts - #{bot.room.available_transcripts.to_yaml}"
     
@@ -50,7 +50,7 @@ class Boop < CampfireBot::Plugin
       end
     end
     
-    speak("Primed!")
+    msg.speak("Primed!")
   end
   
   private
