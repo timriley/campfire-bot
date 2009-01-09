@@ -6,7 +6,7 @@ class Help < CampfireBot::Plugin
   on_command 'help', :help
     
   def help(msg)
-    commands = PluginBase.registered_commands.map { |command| command.matcher.to_s + " " }
+    commands = CampfireBot::Plugin.registered_commands.map { |command| command.matcher.to_s + " " }
  
     msg.speak("To address me, type \"#{bot.config['nickname']},\" and a command. \n
     Available commands: #{commands}")
