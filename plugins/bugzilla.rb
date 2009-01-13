@@ -10,10 +10,11 @@ require 'yaml'
 # to avoid volunteering the same information, and whether to show the
 # url with the title.
 #
-# The external program "wget" is used to download web pages.
-#
 # HTMLEntities will be used for better entity (&ndash;) decoding if
 # present, but is not required.
+#
+# Similarly, net/netrc will be used to supply HTTP Basic Auth
+# credentials, but only if it's available.
 #
 # While is designed to work with Bugzilla, it also works fine with:
 # * Debian bug tracking system
@@ -41,7 +42,7 @@ class Bugzilla < CampfireBot::Plugin
     '%2$s%1$s(?:(?:,\s*|,?\sand\s|,?\sor\s|\s+)%1$s)*'
 
   attr_reader :bug_timestamps, :bug_id_regexp, :mention_regexp,
-    :use_htmlentities
+    :use_htmlentities, :use_netrc
 
   def initialize()
     @@config_defaults.each_pair { |name, default|
@@ -67,6 +68,13 @@ class Bugzilla < CampfireBot::Plugin
       @use_htmlentities = true
     rescue LoadError
       debug "Falling back to 'cgi', install 'htmlentities' better unescaping"
+      require 'cgi'
+    end
+    begin
+      require 'net/netrc'
+      @use_netrc = true
+    rescue LoadError
+      debug "Can't load 'net/netrc': HTTP Auth from .netrc will be unavailable"
       require 'cgi'
     end
   end
@@ -100,9 +108,7 @@ class Bugzilla < CampfireBot::Plugin
       else
         debug "fetching title for #{bug}"
         url = sprintf(bug_url, bug)
-        # relies on .netrc for password
-        cmd = "wget --no-check-certificate -q -O - #{url}"
-        html = `#{cmd}`
+        html = http_fetch_body(url)
         if !m = html.match("<title>([^<]+)</title>")
           raise "no title for bug #{bug}!"
         end
@@ -156,5 +162,47 @@ class Bugzilla < CampfireBot::Plugin
     else
       CGI.unescapeHTML(html)
     end
+  end
+
+  # Return the HTTPResponse
+  #
+  # Use SSL if necessary, and check .netrc for
+  # passwords.
+  def http_fetch(url)
+    uri = URI.parse url
+    http = Net::HTTP.new(uri.host, uri.port)
+
+    # Unfortunately the net/http(s) API can't seem to do this for us,
+    # even if we require net/https from the beginning (ruby 1.8)
+    if uri.scheme == "https"
+      require 'net/https'
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+
+    res = http.start { |http|
+      req = Net::HTTP::Get.new uri.request_uri
+      cred = netrc_credentials uri.host
+      req.basic_auth *cred if cred
+      http.request req
+    }
+  end
+
+  # Returns only the document body
+  def http_fetch_body(url)
+    res = http_fetch(url)
+    case res
+    when Net::HTTPSuccess
+      res.body
+    else res.error!
+    end
+  end
+
+  # Returns [username, password] for the given host or nil
+  def netrc_credentials(host)
+    # Don't crash just b/c the gem is not installed
+    return nil if !use_netrc
+    obj = Net::Netrc.locate(host)
+    obj ? [obj.login, obj.password] : nil
   end
 end
