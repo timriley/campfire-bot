@@ -1,4 +1,3 @@
-require 'cgi'
 require 'yaml'
 
 # Lookup bug titles and URLs when their number is mentioned or on command.
@@ -13,19 +12,17 @@ require 'yaml'
 #
 # The external program "wget" is used to download web pages.
 #
+# HTMLEntities will be used for better entity (&ndash;) decoding if
+# present, but is not required.
+#
 # While is designed to work with Bugzilla, it also works fine with:
 # * Debian bug tracking system
 # * KDE Bug tracking system
-# * Trac - if you don't mind calling your tickets bugs
-# * Redmine - if you don't mind calling your issues bugs
+# * Trac - if you configure to recognize "tickets" instead of "bugs"
+# * Redmine - if you configure to recognize "issues" instead of "bugs"
 class Bugzilla < CampfireBot::Plugin
-  MENTION_REGEXP = /bugs?:?\s+
-                    (?:[0-9]{3,6})
-                    (?:(?:,\s*|,?\sand\s|,?\sor\s|\s+)
-                     (?:[0-9]{3,6})
-                     )*/ix
-  on_message MENTION_REGEXP, :describe_mention
   on_command 'bug', :describe_command
+  # on_message registered below...
 
   def self.config_var(name, default)
     attr_reader name
@@ -38,17 +35,39 @@ class Bugzilla < CampfireBot::Plugin
   config_var :debug_enabled, false
   config_var :bug_url, "https://bugzilla/show_bug.cgi?id=%s"
   config_var :link_enabled, true
+  config_var :bug_id_pattern, '(?:[0-9]{3,6})'
+  config_var :bug_word_pattern, 'bugs?:?\s+'
+  config_var :mention_pattern,
+    '%2$s%1$s(?:(?:,\s*|,?\sand\s|,?\sor\s|\s+)%1$s)*'
 
-  attr_reader :bug_timestamps
+  attr_reader :bug_timestamps, :bug_id_regexp, :mention_regexp,
+    :use_htmlentities
 
   def initialize()
     @@config_defaults.each_pair { |name, default|
       instance_variable_set("@#{name.to_s}",
                             bot.config["bugzilla_#{name.to_s}"] || default)
     }
+
+    @bug_id_regexp = Regexp.new(bug_id_pattern, Regexp::IGNORECASE)
+    @mention_regexp = Regexp.new(sprintf(mention_pattern,
+                                         bug_id_pattern, bug_word_pattern),
+                      Regexp::IGNORECASE)
+    self.class.on_message mention_regexp, :describe_mention
+
     @bug_timestamps = YAML::load(File.read(@data_file)) rescue {}
     if link_enabled
       require 'shorturl'
+    end
+
+    # Put this in the constructor so we don't fail to find htmlentities
+    # every time we fetch a bug title.
+    begin
+      require 'htmlentities'
+      @use_htmlentities = true
+    rescue LoadError
+      debug "Falling back to 'cgi', install 'htmlentities' better unescaping"
+      require 'cgi'
     end
   end
 
@@ -58,7 +77,7 @@ class Bugzilla < CampfireBot::Plugin
 
   def describe_mention(msg)
     debug "heard a mention"
-    match = msg[:message].match(MENTION_REGEXP)
+    match = msg[:message].match(mention_regexp)
     describe_bugs msg, match.to_s, true
   end
 
@@ -71,7 +90,7 @@ class Bugzilla < CampfireBot::Plugin
   protected
 
   def describe_bugs(msg, text, check_timestamp)
-    summaries = text.to_s.scan(/[0-9]{3,6}/).collect { |bug|
+    summaries = text.to_s.scan(bug_id_regexp).collect { |bug|
       debug "mentioned bug #{bug}"
       now = Time.new
       last_spoke = (bug_timestamps[msg[:room].name] ||= {})[bug]
@@ -88,15 +107,16 @@ class Bugzilla < CampfireBot::Plugin
           raise "no title for bug #{bug}!"
         end
         debug "fetched."
-        title = CGI.unescapeHTML(m[1])
+        title = html_decode(m[1])
         title += " (#{ShortURL.shorten(url)})" if link_enabled
         bug_timestamps[msg[:room].name][bug] = now
         title
       end
     }.reject { |s| s.nil? }
     if !summaries.empty?
+      expire_timestamps
       n = bug_timestamps.inject(0) { |sum, pair| sum + pair[1].size }
-      debug "Rewriting #{n} timestamps"
+      debug "Writing #{n} timestamps"
       File.open(data_file, 'w') do |out|
         YAML.dump(bug_timestamps, out)
       end
@@ -108,6 +128,33 @@ class Bugzilla < CampfireBot::Plugin
       }
     else
       debug "nothing to say."
+    end
+  end
+
+  # Don't let the datafile or the in-memory list grow too
+  # large over long periods of time.  Remove entries that are
+  # well over min_period.
+  def expire_timestamps
+    debug "Expiring bug timestamps"
+    cutoff = Time.new - (2 * min_period)
+    recent = {}
+    bug_timestamps.each { |room, hash|
+      recent[room] = {}
+      hash.each { |bug, ts|
+        recent[room][bug] = ts if ts > cutoff
+      }
+      recent.delete(room) if recent[room].empty?
+    }
+    @bug_timestamps = recent
+  end
+
+  # Returns the non-HTML version of the given string using
+  # htmlentities if available, or else unescapeHTML
+  def html_decode(html)
+    if use_htmlentities
+      HTMLEntities.new.decode(html)
+    else
+      CGI.unescapeHTML(html)
     end
   end
 end
