@@ -40,11 +40,11 @@ class Beer < CampfireBot::Plugin
     end
   end
   
-  def credit_cmd(msg)
+  def demand_beer(msg)
     
   end
   
-  def balance_cmd(msg)
+  def beer_balances(msg)
     
   end
   
@@ -59,6 +59,22 @@ class Beer < CampfireBot::Plugin
     write
     
   end
+    
+  def get_balance(user1, user2)
+    bal = balance(user1.downcase, user2.downcase)
+     if bal > 0
+        msg.speak("#{user1} owes #{user2} #{bal} beers")
+      else
+        msg.speak("#{user2} owes #{user1} #{bal} beers")
+      end
+  end 
+  
+  def all_balances(msg)
+
+  end
+    
+    
+  private  
   
   def balance(user1, user2)
     hash = get_hash(user1, user2)
@@ -67,20 +83,6 @@ class Beer < CampfireBot::Plugin
     bal =* -1 if first_user == user1
     bal
   end
-  
-  def all_balances(user1)
-    
-  end
-  
-  def get_bal
-    bal = balance(user1, user2)
-     if bal > 0
-        msg.speak("#{user1} owes #{user2} #{bal} beers")
-      else
-        msg.speak("#{user2} owes #{user1} #{bal} beers")
-      end
-  end 
-    
     
   def get_hash(user_1, user_2)
     user1 = user_1.downcase
@@ -93,34 +95,7 @@ class Beer < CampfireBot::Plugin
     end
   end
   
-  
-  def respond(msg)
-    # puts "entering respond()"
-    @balances = init()
-    puts msg[:message]
-    puts msg[:message] =~ RESPOND_REGEXP 
-    puts $1, $2, $3
-    if !@balances.has_key?($2.downcase)
-      msg.speak("Sorry, I don't know what #{$2} is.")
-    else
-      fact = @balances[$2.downcase]
-      msg.speak("#{msg[:person].split(" ")[0]}, #{$2} is #{fact}.")
-    end
-  end
-  
-  def define(msg)
-    # puts 'entering define()'
-    @balances = init()
-    # puts @balances
-    # puts msg[:message]
-    # puts msg[:message] =~ Regexp.new("^#{bot.config['nickname']},\\s+#{DEFINE_REGEXP.source}", Regexp::IGNORECASE)
-    # puts @define_regexp
-    # puts $1, $2, $3
-    @balances[$2.downcase] = $3
-    msg.speak("Okay, #{$2} is now #{$3}")
-  end
-  
-  def init
+    def init
     # puts "entering init()"
     YAML::load(File.read(File.join(BOT_ROOT, 'tmp', 'beer.yml')))
   end
@@ -131,8 +106,7 @@ class Beer < CampfireBot::Plugin
     end
     
   end
-  
-  
+    
   def reload(msg)
     @balances = init()
     speak("ok, reloaded #{@balances.size} balances")
