@@ -22,12 +22,12 @@ class Beer < CampfireBot::Plugin
   def give_beer(msg)     
     args = msg[:message].split(' ')
         
-    puts msg[:person]
-    if !args[0].nil?
-      person1 = args[0]
+    # puts msg[:person]
+    if !args[1].nil?
+      person1 = args[1]
       speaker = msg[:person]
       
-      amt = !args[1].nil? ? args[1].to_i : 1
+      amt = !args[2].nil? ? args[2].to_i : 1
       beer_transaction(person1, speaker, amt)
       bal = balance(person1, speaker)
       if bal > 0
@@ -48,14 +48,15 @@ class Beer < CampfireBot::Plugin
     
   end
   
-  
   def beer_transaction(user1, user2, amount)
     @balances = init()
+    # p @balances
     hash = get_hash(user1, user2)
     if !@balances.key?(hash)
       @balances[hash] = 0
     end
     @balances[hash] += amount
+    # p @balances
     write
     
   end
@@ -72,15 +73,14 @@ class Beer < CampfireBot::Plugin
   def all_balances(msg)
 
   end
-    
-    
-  private  
+  
+  
   
   def balance(user1, user2)
     hash = get_hash(user1, user2)
     bal = @balances[hash]
     first_user = [user1, user2].max
-    bal =* -1 if first_user == user1
+    bal *= -1 if first_user == user1
     bal
   end
     
