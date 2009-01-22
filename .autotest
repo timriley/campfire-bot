@@ -2,4 +2,10 @@ require 'autotest/redgreen'
 Autotest.add_hook :initialize do |at|
   # Ignore files in tmp/
   at.add_exception %r%^\./tmp%
+  
+  at.add_mapping(/plugins\/(.+).rb/) do |f, _|
+      at.files_matching(/.*spec.rb$/)
+  end
+  
 end
+
