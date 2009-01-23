@@ -11,7 +11,9 @@ require "#{BOT_ROOT}/lib/plugin"
 # This requires my fork of tinder for the time being
 # gem sources -a http://gems.github.com
 # sudo gem install timriley-tinder
-require 'tinder'
+# require 'tinder'
+require "#{BOT_ROOT}/../tinder/lib/tinder"
+
 
 module CampfireBot
   class Bot
@@ -81,9 +83,8 @@ module CampfireBot
     def join_rooms_as_guest
       baseurl, guest_token  = @config['guesturl'].split(/.com\//)
       @campfire             = Tinder::Campfire.new(@config['site'], :guesturl => @config['guesturl'], :ssl => !!@config['ssl'])
-      roomid                = @campfire.guestlogin(@config['guesturl'], @config['nickname'])
-      @rooms[roomid]        = Tinder::Room.new(@campfire, roomid, @config['room'])
-      @rooms[roomid].join
+      @rooms[guest_token]   = @campfire.find_room_by_guest_hash(guest_token, @config['nickname'])
+      @rooms[guest_token].join
     end
     
     def join_rooms_as_user
