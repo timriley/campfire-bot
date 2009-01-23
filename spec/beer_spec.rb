@@ -103,16 +103,26 @@ describe "demanding beer" do
 end
 
 describe "redeeming beer" do
+  before(:each) do
+    setup
+  end
+  
   it "should respond to the command !redeem_beer" do
-    pending
+    @beer.should_receive(:redeem_beer)
+    sendmsg('!redeem_beer Foo')
+    
   end
   
   it "should increase my balance with the opposite party" do
-    pending    
+    @beer.balances['albertjosh'] = 5
+    sendmsg '!redeem_beer albert'
+    @beer.balance('Josh', 'albert').should eql(4)    
   end
   
   it "should not increase my balance if it is already zero" do
-    pending
+    @beer.balances['billjosh'] = 0
+    puts sendmsg("!redeem_beer bill").should =~ /to begin with/
+    @beer.balance('Josh', 'bill').should eql(0)
   end
 end
 
@@ -129,12 +139,12 @@ describe "should have the correct reply for" do
   end
   
   it "positive balances (I am owed beers)" do
-    @beer.balances['joshalbert'] = 5
-    sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
+    @beer.balances['albertjosh'] = 0
+    sendmsg("!demand_beer albert").should =~ /albert now owes you .* beer/
   end
   
   it "zero balance (all even)" do
-    @beer.balances['joshalbert'] = 1
+    @beer.balances['albertjosh'] = -1
     sendmsg("!give_beer albert").should =~ /albert .* even/
   end
   
