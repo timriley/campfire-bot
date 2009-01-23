@@ -2,11 +2,11 @@ require 'yaml'
 
 class Beer < CampfireBot::Plugin
   
-  Beer::COMMAND_REGEXP = "^(?:!|#{bot.config['nickname']},\\s+)"
+  # Beer::COMMAND_REGEXP = "^(?:!|#{bot.config['nickname']},\\s+)"
   
-  Beer::GIVE_REGEXP =  Regexp.new("#{Beer::COMMAND_REGEXP}([a-z\\s\\.]{4,12})([0-9]+)*", Regexp::IGNORECASE)
-  Beer::CREDIT_REGEXP = //
-  Beer::BALANCE_REGEXP = //
+  # Beer::GIVE_REGEXP =  Regexp.new("#{Beer::COMMAND_REGEXP}([a-z\\s\\.]{4,12})([0-9]+)*", Regexp::IGNORECASE)
+  # Beer::CREDIT_REGEXP = //
+  # Beer::BALANCE_REGEXP = //
     
   # on_message @debit_matcher, :respond
   # on_message Regexp.new("#{CREDIT_REGEXP.source}", Regexp::IGNORECASE), :credit_cmd
