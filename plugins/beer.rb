@@ -16,8 +16,8 @@ class Beer < CampfireBot::Plugin
   # on_command 'beer', :balance_cmd
   
   # parties sort alphabetically
-  # john.b.josh w.: -1 (josh owes john a beer)
-  # john.b.josh w.: 1 (john owes josh a beer)
+  # john.b.josh w.: 1 (josh owes john a beer)
+  # john.b.josh w.: -1 (john owes josh a beer)
   
   
   def give_beer(msg)     
