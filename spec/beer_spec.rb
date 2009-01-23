@@ -18,6 +18,10 @@ class SpecMessage < CampfireBot::Message
   
 end 
 
+class SpecBeer < CampfireBot::Plugin::Beer
+  attr_accessor :balances
+end
+
 # send a message to the room and return the response
 def sendmsg(msg)
   puts "sendmsg(#{msg})"
@@ -30,9 +34,13 @@ end
 # instantiate the bot and the plugin fresh
 def setup
   bot = CampfireBot::Bot.instance
-  @beer = Beer.new()
+  @beer = SpecBeer.new()
   CampfireBot::Plugin.registered_plugins['Beer'] = @beer
   @message = SpecMessage.new(:person => 'Josh')
+  @beer.balances = {}
+  @beer.stub!(:init).and_return(@beer.balances)
+  @beer.stub!(:write)
+  puts @beer.balances
 end
 
 describe "giving beer" do
@@ -77,11 +85,13 @@ describe "giving beer" do
     end
     
     it "positive balances (I am owed beers)" do
+      @beer.balances['joshalbert'] = 5
       sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
     end
 
     it "zero balance (all even)" do
-      sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
+      @beer.balances['joshalbert'] = 1
+      sendmsg("!give_beer albert").should =~ /albert .* even/
     end
   end
 
