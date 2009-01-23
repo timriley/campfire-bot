@@ -65,7 +65,8 @@ describe "giving beer" do
 
   
   it "should say back to me what my balance is" do
-     sendmsg('!give_beer bruce').should_not eql(nil)
+     bal = @beer.balance('Josh', 'Foo') - 1
+     sendmsg('!give_beer bruce').should =~ /#{bal.abs}/
   end
   
   it "should accept an argument of the number of beers to credit" do
