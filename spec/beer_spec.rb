@@ -7,6 +7,7 @@ require File.join(File.dirname(__FILE__), '../lib/bot.rb')
 describe "giving beer" do
   before(:all) do
     bot = CampfireBot::Bot.instance
+    # CampfireBot::Message.any_instance.stub!(:speak)
     # bot.config = []
     # bot.stub!(:config).and_return({'nickname' => 'foo'})
     # bot.send(:load_plugins)
@@ -15,16 +16,22 @@ describe "giving beer" do
     @beer = CampfireBot::Plugin.registered_plugins['Beer']
   end
   
+  before(:each) do
+    @message = CampfireBot::Message.new(:person => 'Josh')
+    @message.stub!(:speak)
+  end
+  
   it "should respond to the command !give_beer" do
 
-    @message = CampfireBot::Message.new(:person => 'Josh', :message => '!give_beer')
+    @message[:message] = "!give_beer"
     @beer.should_receive(:give_beer)
+    
     bot.send(:handle_message, @message)
   
   end
   
   it "should increase my balance with Foo" do
-    @message = CampfireBot::Message.new(:person => 'Josh', :message => '!give_beer Foo')
+    @message[:message] = '!give_beer Foo'
     
     bal = @beer.balance('Josh', 'Foo')
     # @beer.should_receive(:give_beer)
@@ -33,17 +40,34 @@ describe "giving beer" do
     
     p "initial bal is #{bal}"
     bot.send(:handle_message, @message)
-    p 'sent message'
     
     @beer.balance('Josh', 'Foo').should eql(bal - 1)
   end
   
   it "should say back to me what my balance is" do
-    @message = CampfireBot::Message.new(:person => 'Josh', :message => '!give_beer Foo')
-    @message.should_receive(:speak)
-    
+    @message[:message] = '!give_beer Foo'
+    bal = @beer.balance('Foo', 'Josh') + 1
+    exp = @message.should_receive(:speak)
+    # .with("Okay, you now owe Foo #{bal} beers")
+    #FIXME this is brittle-- need to test for negative and zero balances
+    bot.send(:handle_message, @message)
+
   end
   
+  describe "should have the correct reply for" do
+    it "negative balances (I owe beers)" do
+      
+    end
+    
+    it "positive balances (I am owed beers)" do
+      
+    end
+    
+    it "zero balance (all even)" do
+      
+    end
+  end
+
 end
 
 describe "demanding beer" do

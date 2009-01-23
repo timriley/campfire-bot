@@ -29,13 +29,16 @@ class Beer < CampfireBot::Plugin
       speaker = msg[:person]
       
       amt = !args[1].nil? ? args[1].to_i : 1
+
       beer_transaction(person1, speaker, amt)
+
       bal = balance(person1, speaker)
+      # puts "post transaction balance = #{bal}"
       if bal > 0
-        msg.speak("Okay, you now owe #{person1} #{bal} beers ")
+        msg.speak("Okay, you now owe #{person1} #{bal} beers")
       elsif bal < 0
-        msg.speak("Okay, #{person1} now owes you #{bal} beers ")
-      elsif bal == 0
+        msg.speak("Okay, #{person1} now owes you #{bal} beers")
+      else
         msg.speak("Okay, you and #{person1} are now even")
       end
     end
