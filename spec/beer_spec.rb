@@ -41,12 +41,12 @@ def setup
   @beer.stub!(:init).and_return(@beer.balances)
   @beer.stub!(:write)
   puts @beer.balances
+  @message = SpecMessage.new(:person => 'Josh')
 end
 
 describe "giving beer" do
   before(:each) do
     setup
-    
   end
   
   it "should respond to the command !give_beer" do
@@ -61,14 +61,10 @@ describe "giving beer" do
     sendmsg '!give_beer Foo'
     @beer.balance('Josh', 'Foo').should eql(bal - 1)
   end
+
   
   it "should say back to me what my balance is" do
-    # exp = @message.should_receive(:speak)
-    # .with("Okay, you now owe Foo #{bal} beers")
-    #FIXME this is brittle-- need to test for negative and zero balances
-    
-    # lambda {sendmsg('!give_beer harvey')}.should_not eql(nil)
-    sendmsg('!give_beer bruce').should_not eql(nil)
+     sendmsg('!give_beer bruce').should_not eql(nil)
   end
   
   it "should accept an argument of the number of beers to credit" do
@@ -76,34 +72,30 @@ describe "giving beer" do
     sendmsg('!give_beer harvey 2')
     @beer.balance('Josh', 'harvey').should eql(bal)
   end
-  
-  describe "should have the correct reply for" do
 
-    it "negative balances (I owe beers)" do
-      # @beer.stub!(:balance).and_return(0, -1)
-      sendmsg("!give_beer james").should =~ /you now owe james .* beer/
-    end
-    
-    it "positive balances (I am owed beers)" do
-      @beer.balances['joshalbert'] = 5
-      sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
-    end
 
-    it "zero balance (all even)" do
-      @beer.balances['joshalbert'] = 1
-      sendmsg("!give_beer albert").should =~ /albert .* even/
-    end
+  it "should not accept negative numbers as an argument" do
+    sendmsg('!give_beer harvey -2').should =~ /negative number/
   end
-
+  
 end
 
 describe "demanding beer" do
-  it "should respond to the command !demand_beer" do
-    pending
+  
+  before(:each) do
+    setup
   end
   
-  it "should decrease my balance with the opposite party" do
-    pending
+  it "should respond to the command !demand_beer" do
+    @beer.should_receive(:demand_beer)
+    sendmsg("!demand_beer albert")
+  end
+  
+  it "should increase my balance with the opposite party" do
+    bal = @beer.balance('Josh', 'Foo')
+    p "initial bal is #{bal}"
+    sendmsg '!demand_beer Foo'
+    @beer.balance('Josh', 'Foo').should eql(bal + 1)
   end
   
 end
@@ -120,5 +112,37 @@ describe "redeeming beer" do
   it "should not increase my balance if it is already zero" do
     pending
   end
+end
+
+
+describe "should have the correct reply for" do
+  
+  before(:each) do
+    setup
+  end
+
+  it "negative balances (I owe beers)" do
+    # @beer.stub!(:balance).and_return(0, -1)
+    sendmsg("!give_beer james").should =~ /you now owe james .* beer/
+  end
+  
+  it "positive balances (I am owed beers)" do
+    @beer.balances['joshalbert'] = 5
+    sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
+  end
+  
+  it "zero balance (all even)" do
+    @beer.balances['joshalbert'] = 1
+    sendmsg("!give_beer albert").should =~ /albert .* even/
+  end
+  
+  it "missing all arguments" do
+    sendmsg("!give_beer").should =~ /don't know whom/
+  end
+  
+  it "non-integer 2nd arg" do
+    sendmsg("!give_beer albert non-int").should =~ /I don't accept non-integer amounts/
+  end
+  
 end
 
