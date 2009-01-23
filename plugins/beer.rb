@@ -16,8 +16,13 @@ class Beer < CampfireBot::Plugin
   # on_command 'beer', :balance_cmd
   
   # parties sort alphabetically
-  # john.b.josh w.: 1 (josh owes john a beer)
-  # john.b.josh w.: -1 (john owes josh a beer)
+  # albertjosh: 1  # alberts account with josh has a positive balance - i.e. josh owes albert 1 beer
+  # balance(albert, josh) = 1
+  # balance(josh, albert) = -1
+  
+  # albertjosh:-1  # alberts account with josh has a negative balance - i.e. albert owes josh 1 beer
+  # balance(albert, josh) = -1
+  # balance(josh, albert) = 1
   
   class BadArgumentException < Exception
   end
@@ -80,8 +85,6 @@ class Beer < CampfireBot::Plugin
         end
       end
       
-      
-      
       beer_transaction(speaker, payee, amt)
 
       bal = balance(speaker, payee)
@@ -112,7 +115,7 @@ class Beer < CampfireBot::Plugin
     if !@balances.key?(hash)
       @balances[hash] = 0
     end
-    @balances[hash] += amount
+    @balances[hash] -= amount
     # p "beer_transaction end: #{@balances.inspect}"
     write
     
@@ -121,16 +124,22 @@ class Beer < CampfireBot::Plugin
   
   
   def balance(user1, user2)
-    # balance user1, user2 = 1 : user2 owes user1 a beer
-    # balance user1, user2 = -1: user1 owes user2 a beer
+    # parties sort alphabetically
+    # albertjosh: 1  # alberts account with josh has a positive balance - i.e. josh owes albert 1 beer
+    # balance(albert, josh) = 1
+    # balance(josh, albert) = -1
+
+    # albertjosh:-1  # alberts account with josh has a negative balance - i.e. albert owes josh 1 beer
+    # balance(albert, josh) = -1
+    # balance(josh, albert) = 1
     @balances = init()
     hash = get_hash(user1, user2)
+    puts "hash is #{hash}, @balances[#{hash}] = #{@balances[hash]}"
     bal = @balances[hash]
     if bal.nil? 
       0
     else
-      first_user = [user1, user2].min
-      bal = bal * -1 if first_user == user1
+      bal = bal * -1 if [user1, user2].sort[0] == user2 # reverse balance if not in same order as hash
       bal
     end
   end
@@ -139,11 +148,12 @@ class Beer < CampfireBot::Plugin
     user1 = user_1.downcase
     user2 = user_2.downcase
     
-    if user1 > user2
-      "#{user1}#{user2}"
-    else
-      "#{user2}#{user1}"
-    end
+    [user1,user2].sort.to_s
+    # if user1 < user2
+    #   "#{user1}#{user2}"
+    # else
+    #   "#{user2}#{user1}"
+    # end
   end
   
   def init
