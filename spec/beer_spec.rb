@@ -34,6 +34,7 @@ end
 # instantiate the bot and the plugin fresh
 def setup
   bot = CampfireBot::Bot.instance
+  bot.stub!(:config).and_return({'nickname' => 'Bot'})
   @beer = SpecBeer.new()
   CampfireBot::Plugin.registered_plugins['Beer'] = @beer
   @message = SpecMessage.new(:person => 'Josh')
