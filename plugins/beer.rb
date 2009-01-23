@@ -13,7 +13,7 @@ class Beer < CampfireBot::Plugin
   on_command 'give_beer', :give_beer
   on_command 'demand_beer', :demand_beer
   on_command 'redeem_beer', :redeem_beer 
-  # on_command 'beer', :balance_cmd
+  on_command 'balance', :balance_cmd
   
   # parties sort alphabetically
   # albertjosh: 1  # alberts account with josh has a positive balance - i.e. josh owes albert 1 beer
@@ -37,6 +37,37 @@ class Beer < CampfireBot::Plugin
   
   def redeem_beer(msg)
     give_or_demand_beer(msg, :redeem)
+  end
+  
+  def balance_cmd(msg)
+    begin
+      if msg[:message].empty?
+        return
+        # raise BadArgumentException.new, "Sorry, I don't know whom to #{trans_type_msg}"
+      end
+                
+      speaker = msg[:person]
+      payee = msg[:message]
+      
+      if !@balances.key?(get_hash(speaker, payee))
+        raise BadArgumentException.new, "Sorry, you don't have any beer transactions with anyone named #{payee}"
+      end
+      
+      bal = balance(speaker, payee)
+
+      units = bal.abs == 1 ? "beer" : "beers"
+      
+      if bal > 0
+        msg.speak("#{payee} owes you #{bal} #{units}")
+      elsif bal < 0
+        msg.speak("You owe #{payee} #{bal * -1} #{units}")
+      else
+        msg.speak("You and #{payee} are even")
+      end
+        
+      rescue BadArgumentException => exception
+        msg.speak(exception.message)
+      end
   end
   
   # def get_balance(user1, user2)

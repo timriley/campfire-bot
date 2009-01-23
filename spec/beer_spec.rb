@@ -158,3 +158,34 @@ describe "should have the correct reply for" do
   
 end
 
+describe "balance? command" do
+  before(:each) do
+    setup
+  end
+  
+  it "should respond to the !balance command" do
+    @beer.should_receive(:balance_cmd)
+    sendmsg("!balance")
+  end
+  
+  it "should require an argument of a user" do
+    sendmsg("!balance").should be_nil
+  end
+  
+  describe "should return the correct balance for" do
+    it "positive balances" do
+      @beer.balances['foojosh'] = -1
+      sendmsg("!balance Foo").should =~ /owes you 1 beer/
+    end
+    
+    it "negative balances" do
+      @beer.balances['foojosh'] = 1
+      sendmsg("!balance Foo").should =~ /You owe Foo 1 beer/
+    end
+    
+    it "non-existent balances" do
+      sendmsg("!balance Fsdfsdfsdfsdfsdfoo").should =~ /transactions/
+    end
+    
+  end
+end
