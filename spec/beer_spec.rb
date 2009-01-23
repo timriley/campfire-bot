@@ -3,68 +3,89 @@ BOT_ROOT        = File.join(File.dirname(__FILE__), '..')
 BOT_ENVIRONMENT = 'development'
 
 require File.join(File.dirname(__FILE__), '../lib/bot.rb')
+bot = CampfireBot::Bot.instance
+require "#{BOT_ROOT}/plugins/beer.rb"
 
-describe "giving beer" do
-  before(:all) do
-    bot = CampfireBot::Bot.instance
-    # CampfireBot::Message.any_instance.stub!(:speak)
-    # bot.config = []
-    # bot.stub!(:config).and_return({'nickname' => 'foo'})
-    # bot.send(:load_plugins)
-    require "#{BOT_ROOT}/plugins/beer.rb"
-    CampfireBot::Plugin.registered_plugins['Beer'] = CampfireBot::Plugin::Beer.new()
-    @beer = CampfireBot::Plugin.registered_plugins['Beer']
+
+class SpecMessage < CampfireBot::Message
+  attr_reader :response
+  
+  #overwrite message.speak method so that we can expose the output
+  def speak(msg)
+    puts "specmessage.speak(#{msg})"
+    @response = msg
   end
   
+end 
+
+# send a message to the room and return the response
+def sendmsg(msg)
+  puts "sendmsg(#{msg})"
+  @message[:message] = msg
+  bot.send(:handle_message, @message)
+  puts "sendmsg returns #{@message.response}"
+  @message.response
+end
+
+# instantiate the bot and the plugin fresh
+def setup
+  bot = CampfireBot::Bot.instance
+  @beer = Beer.new()
+  CampfireBot::Plugin.registered_plugins['Beer'] = @beer
+end
+
+describe "giving beer" do
+  
   before(:each) do
-    @message = CampfireBot::Message.new(:person => 'Josh')
-    @message.stub!(:speak)
+    setup
+    @message = SpecMessage.new(:person => 'Josh')
   end
   
   it "should respond to the command !give_beer" do
-
-    @message[:message] = "!give_beer"
     @beer.should_receive(:give_beer)
-    
-    bot.send(:handle_message, @message)
   
+    sendmsg "!give_beer"
+
   end
-  
-  it "should increase my balance with Foo" do
-    @message[:message] = '!give_beer Foo'
-    
+
+  it "should decrease my balance with Foo" do
     bal = @beer.balance('Josh', 'Foo')
-    # @beer.should_receive(:give_beer)
-    # @beer.should_receive(:beer_transaction)
-    @message.stub!(:speak)
-    
     p "initial bal is #{bal}"
-    bot.send(:handle_message, @message)
-    
+
+    sendmsg '!give_beer Foo'
+  
     @beer.balance('Josh', 'Foo').should eql(bal - 1)
   end
   
   it "should say back to me what my balance is" do
-    @message[:message] = '!give_beer Foo'
-    bal = @beer.balance('Foo', 'Josh') + 1
-    exp = @message.should_receive(:speak)
+    # exp = @message.should_receive(:speak)
     # .with("Okay, you now owe Foo #{bal} beers")
     #FIXME this is brittle-- need to test for negative and zero balances
-    bot.send(:handle_message, @message)
-
+    
+    # lambda {sendmsg('!give_beer harvey')}.should_not eql(nil)
+    sendmsg('!give_beer bruce').should_not eql(nil)
+  end
+  
+  it "should accept an argument of the number of beers to credit" do
+    bal = @beer.balance('Josh', 'harvey') + 2
+    sendmsg('!give_beer harvey 2')
+    @beer.balance('Josh', 'harvey').should eql(bal)
   end
   
   describe "should have the correct reply for" do
+
     it "negative balances (I owe beers)" do
-      
+      # @beer.stub!(:balance).and_return(0, -1)
+      sendmsg("!give_beer james").should =~ /you now owe james .* beer/
     end
     
     it "positive balances (I am owed beers)" do
-      
+      sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
     end
     
     it "zero balance (all even)" do
-      
+      pending
+      sendmsg("!give_beer albert").should =~ /albert now owes you .* beer/
     end
   end
 
@@ -72,11 +93,11 @@ end
 
 describe "demanding beer" do
   it "should respond to the command !demand_beer" do
-        pending
+    pending
   end
   
   it "should decrease my balance with the opposite party" do
-        pending
+    pending
   end
   
 end
@@ -91,7 +112,7 @@ describe "redeeming beer" do
   end
   
   it "should not increase my balance if it is already zero" do
-        pending
+    pending
   end
 end
 

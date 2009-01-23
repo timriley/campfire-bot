@@ -19,27 +19,30 @@ class Beer < CampfireBot::Plugin
   # john.b.josh w.: -1 (josh owes john a beer)
   # john.b.josh w.: 1 (john owes josh a beer)
   
+  
   def give_beer(msg)     
     # puts 'give_beer()'
     args = msg[:message].split(' ')
     # puts args.inspect    
     # puts msg[:person]
     if !args[0].nil?
-      person1 = args[0]
+      payee = args[0]
       speaker = msg[:person]
       
       amt = !args[1].nil? ? args[1].to_i : 1
+      puts args[1] 
+      amt = amt * -1 # this is a credit
+      
+      beer_transaction(speaker, payee, amt)
 
-      beer_transaction(person1, speaker, amt)
-
-      bal = balance(person1, speaker)
+      bal = balance(speaker, payee)
       # puts "post transaction balance = #{bal}"
       if bal > 0
-        msg.speak("Okay, you now owe #{person1} #{bal} beers")
+        msg.speak("Okay, you now owe #{payee} #{bal} beers")
       elsif bal < 0
-        msg.speak("Okay, #{person1} now owes you #{bal} beers")
+        msg.speak("Okay, #{payee} now owes you #{bal * -1} beers")
       else
-        msg.speak("Okay, you and #{person1} are now even")
+        msg.speak("Okay, you and #{payee} are now even")
       end
     end
   end
@@ -53,6 +56,8 @@ class Beer < CampfireBot::Plugin
   end
   
   def beer_transaction(user1, user2, amount)
+    #beer_transaction user1, user2, -1 : user1 gives user2 a beer
+    #beer_transaction user1, user2, 1 : user2 gives user1 a beer
     @balances = init()
     # puts 'beer_transaction'
     # p "beer_transaction start: #{@balances.inspect}"
@@ -80,13 +85,15 @@ class Beer < CampfireBot::Plugin
   end
     
   def balance(user1, user2)
+    # balance user1, user2 = 1 : user2 owes user1 a beer
+    # balance user1, user2 = -1: user1 owes user2 a beer
     @balances = init()
     hash = get_hash(user1, user2)
     bal = @balances[hash]
     if bal.nil? 
       0
     else
-      first_user = [user1, user2].max
+      first_user = [user1, user2].min
       bal = bal * -1 if first_user == user1
       bal
     end
