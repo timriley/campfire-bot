@@ -70,35 +70,30 @@ class Beer < CampfireBot::Plugin
       end
   end
   
-  # def get_balance(user1, user2)
-  #   bal = balance(user1.downcase, user2.downcase)
-  #    if bal > 0
-  #       msg.speak("#{user1} owes #{user2} #{bal} beers")
-  #     else
-  #       msg.speak("#{user2} owes #{user1} #{bal} beers")
-  #     end
-  # end
-  #   
   
   def give_or_demand_beer(msg, trans_type)     
-    args = msg[:message].split(' ')
-    
+    args = msg[:message].match(/(^[a-z\s\.\-]+?)(\s*\-*[0-9]*)$/i)
+    # puts "args = #{args.inspect}"
+    # puts "args[0] = #{args[0]}"
+    # puts "args[1] = #{args[1]}"
+    # puts "args[2] = #{args[2]}"
+
     trans_type_msg = {:give => 'give beer to', :demand => 'demand beer from', :redeem => 'redeem beer from'}[trans_type]
     
     begin
   
-      if args[0].nil?
+      if args.nil?
         raise BadArgumentException.new, "Sorry, I don't know whom to #{trans_type_msg}"
       end
       
-      payee = args[0]
+      payee = args[1].strip
       speaker = msg[:person]
             
-      if !args[1].nil? and args[1].to_i == 0
+      if args[2] != "" and args[2].to_i == 0
         raise BadArgumentException.new, "Sorry, I don't accept non-integer amounts"
       end
       
-      amt = !args[1].nil? ? args[1].to_i : 1
+      amt = args[2] != "" ? args[2].to_i : 1
       
       if amt <= 0
         raise BadArgumentException.new, "Sorry, I don't accept negative numbers as an argument"
