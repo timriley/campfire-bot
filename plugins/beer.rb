@@ -11,31 +11,81 @@ class Beer < CampfireBot::Plugin
   # on_message @debit_matcher, :respond
   # on_message Regexp.new("#{CREDIT_REGEXP.source}", Regexp::IGNORECASE), :credit_cmd
   on_command 'give_beer', :give_beer
-  # on_command 'demand_beer', :demand_beer
-  # on_command 'redeem_beer', :redeem_beer 
+  on_command 'demand_beer', :demand_beer
+  on_command 'redeem_beer', :redeem_beer 
   # on_command 'beer', :balance_cmd
   
   # parties sort alphabetically
   # john.b.josh w.: 1 (josh owes john a beer)
   # john.b.josh w.: -1 (john owes josh a beer)
   
+  class BadArgumentException < Exception
+  end
   
-  def give_beer(msg)     
-    # puts 'give_beer()'
+  def give_beer(msg)
+    give_or_demand_beer(msg, :give)
+  end
+  
+  def demand_beer(msg)
+    give_or_demand_beer(msg, :demand)
+  end
+  
+  def redeem_beer(msg)
+    give_or_demand_beer(msg, :redeem)
+  end
+  
+  # def get_balance(user1, user2)
+  #   bal = balance(user1.downcase, user2.downcase)
+  #    if bal > 0
+  #       msg.speak("#{user1} owes #{user2} #{bal} beers")
+  #     else
+  #       msg.speak("#{user2} owes #{user1} #{bal} beers")
+  #     end
+  # end
+  #   
+  
+  def give_or_demand_beer(msg, trans_type)     
     args = msg[:message].split(' ')
-    # puts args.inspect    
-    # puts msg[:person]
-    if !args[0].nil?
+    
+    trans_type_msg = {:give => 'give beer to', :demand => 'demand beer from', :redeem => 'redeem beer from'}[trans_type]
+    
+    begin
+  
+      if args[0].nil?
+        raise BadArgumentException.new, "Sorry, I don't know whom to #{trans_type_msg}"
+      end
+      
       payee = args[0]
       speaker = msg[:person]
+            
+      if !args[1].nil? and args[1].to_i == 0
+        raise BadArgumentException.new, "Sorry, I don't accept non-integer amounts"
+      end
       
       amt = !args[1].nil? ? args[1].to_i : 1
-      puts args[1] 
-      amt = amt * -1 # this is a credit
+      
+      if amt <= 0
+        raise BadArgumentException.new, "Sorry, I don't accept negative numbers as an argument"
+      end
+      
+      case trans_type
+      when :give
+        amt = amt * -1 # this is a credit
+      when :demand
+        # no change - this is a debit
+      when :redeem
+        # no change - this is a debit
+        if bal = balance(speaker, payee) == 0
+          raise BadArgumentException.new, "#{payee} didn't owe you any beers to begin with."
+        end
+      end
+      
+      
       
       beer_transaction(speaker, payee, amt)
 
       bal = balance(speaker, payee)
+      
       # puts "post transaction balance = #{bal}"
       if bal > 0
         msg.speak("Okay, you now owe #{payee} #{bal} beers")
@@ -44,16 +94,13 @@ class Beer < CampfireBot::Plugin
       else
         msg.speak("Okay, you and #{payee} are now even")
       end
+      
+    rescue BadArgumentException => exception
+      msg.speak(exception.message)
     end
-  end
-  
-  def demand_beer(msg)
     
   end
   
-  def beer_balances(msg)
-    
-  end
   
   def beer_transaction(user1, user2, amount)
     #beer_transaction user1, user2, -1 : user1 gives user2 a beer
@@ -71,19 +118,8 @@ class Beer < CampfireBot::Plugin
     
   end
     
-  def get_balance(user1, user2)
-    bal = balance(user1.downcase, user2.downcase)
-     if bal > 0
-        msg.speak("#{user1} owes #{user2} #{bal} beers")
-      else
-        msg.speak("#{user2} owes #{user1} #{bal} beers")
-      end
-  end 
   
-  def all_balances(msg)
-
-  end
-    
+  
   def balance(user1, user2)
     # balance user1, user2 = 1 : user2 owes user1 a beer
     # balance user1, user2 = -1: user1 owes user2 a beer
