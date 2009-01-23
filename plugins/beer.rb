@@ -8,33 +8,37 @@ class Beer < CampfireBot::Plugin
   Beer::CREDIT_REGEXP = //
   Beer::BALANCE_REGEXP = //
     
-  on_message @debit_matcher, :respond
-  on_message Regexp.new("#{CREDIT_REGEXP.source}", Regexp::IGNORECASE), :credit_cmd
+  # on_message @debit_matcher, :respond
+  # on_message Regexp.new("#{CREDIT_REGEXP.source}", Regexp::IGNORECASE), :credit_cmd
   on_command 'give_beer', :give_beer
-  on_command 'demand_beer', :demand_beer
-  on_command 'redeem_beer', :redeem_beer 
-  on_command 'beer', :balance_cmd
+  # on_command 'demand_beer', :demand_beer
+  # on_command 'redeem_beer', :redeem_beer 
+  # on_command 'beer', :balance_cmd
   
   # parties sort alphabetically
   # john.b.josh w.: -1 (josh owes john a beer)
   # john.b.josh w.: 1 (john owes josh a beer)
   
   def give_beer(msg)     
+    # puts 'give_beer()'
     args = msg[:message].split(' ')
-        
+    # puts args.inspect    
     # puts msg[:person]
-    if !args[1].nil?
-      person1 = args[1]
+    if !args[0].nil?
+      person1 = args[0]
       speaker = msg[:person]
       
-      amt = !args[2].nil? ? args[2].to_i : 1
+      amt = !args[1].nil? ? args[1].to_i : 1
+
       beer_transaction(person1, speaker, amt)
+
       bal = balance(person1, speaker)
+      # puts "post transaction balance = #{bal}"
       if bal > 0
-        msg.speak("Okay, you now owe #{person1} #{bal} beers ")
+        msg.speak("Okay, you now owe #{person1} #{bal} beers")
       elsif bal < 0
-        msg.speak("Okay, #{person1} now owes you #{bal} beers ")
-      elsif bal == 0
+        msg.speak("Okay, #{person1} now owes you #{bal} beers")
+      else
         msg.speak("Okay, you and #{person1} are now even")
       end
     end
@@ -50,13 +54,14 @@ class Beer < CampfireBot::Plugin
   
   def beer_transaction(user1, user2, amount)
     @balances = init()
-    # p @balances
+    # puts 'beer_transaction'
+    # p "beer_transaction start: #{@balances.inspect}"
     hash = get_hash(user1, user2)
     if !@balances.key?(hash)
       @balances[hash] = 0
     end
     @balances[hash] += amount
-    # p @balances
+    # p "beer_transaction end: #{@balances.inspect}"
     write
     
   end
@@ -73,15 +78,18 @@ class Beer < CampfireBot::Plugin
   def all_balances(msg)
 
   end
-  
-  
-  
+    
   def balance(user1, user2)
+    @balances = init()
     hash = get_hash(user1, user2)
     bal = @balances[hash]
-    first_user = [user1, user2].max
-    bal *= -1 if first_user == user1
-    bal
+    if bal.nil? 
+      0
+    else
+      first_user = [user1, user2].max
+      bal = bal * -1 if first_user == user1
+      bal
+    end
   end
     
   def get_hash(user_1, user_2)
@@ -95,7 +103,7 @@ class Beer < CampfireBot::Plugin
     end
   end
   
-    def init
+  def init
     # puts "entering init()"
     YAML::load(File.read(File.join(BOT_ROOT, 'tmp', 'beer.yml')))
   end
