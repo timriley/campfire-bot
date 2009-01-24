@@ -116,10 +116,10 @@ class Beer < CampfireBot::Plugin
       bal = balance(speaker, payee)
       
       # puts "post transaction balance = #{bal}"
-      if bal > 0
-        msg.speak("Okay, you now owe #{payee} #{bal} beers")
-      elsif bal < 0
-        msg.speak("Okay, #{payee} now owes you #{bal * -1} beers")
+      if bal < 0
+        msg.speak("Okay, you now owe #{payee} #{bal * -1} beers")
+      elsif bal > 0
+        msg.speak("Okay, #{payee} now owes you #{bal} beers")
       else
         msg.speak("Okay, you and #{payee} are now even")
       end
@@ -141,6 +141,7 @@ class Beer < CampfireBot::Plugin
     if !@balances.key?(hash)
       @balances[hash] = 0
     end
+    amount = amount * -1 if [user1, user2].sort[0] == user1 # reverse amount if not in same order as hash
     @balances[hash] -= amount
     # p "beer_transaction end: #{@balances.inspect}"
     write
