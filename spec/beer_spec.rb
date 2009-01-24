@@ -56,11 +56,11 @@ describe "giving beer" do
   end
   
 
-  it "should decrease my balance with Foo" do
+  it "should increase my balance with Foo" do
     bal = @beer.balance('Josh', 'Foo')
     p "initial bal is #{bal}"
     sendmsg '!give_beer Foo'
-    @beer.balance('Josh', 'Foo').should eql(bal - 1)
+    @beer.balance('Josh', 'Foo').should eql(bal + 1)
   end
 
   
