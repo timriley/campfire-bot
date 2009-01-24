@@ -139,7 +139,7 @@ describe "should have the correct reply for" do
   end
 
   it "negative balances (I owe beers)" do
-    # @beer.stub!(:balance).and_return(0, -1)
+    @beer.balances['jamesjosh'] = 0
     sendmsg("!give_beer james").should =~ /you now owe james .* beer/
   end
   
@@ -157,9 +157,9 @@ describe "should have the correct reply for" do
     sendmsg("!give_beer").should =~ /don't know whom/
   end
   
-  # it "non-integer 2nd arg" do
-  #     sendmsg("!give_beer albert non-int").should =~ /I don't accept non-integer amounts/
-  #   end
+  it "non-integer 2nd arg" do
+    sendmsg("!give_beer albert non-int").should =~ /I don't accept non-integer amounts/
+  end
   
 end
 
@@ -193,4 +193,12 @@ describe "balance? command" do
     end
     
   end
+end
+
+describe "beer_transactiona and balance" do
+  it "should handle equivalent transactions equivalently" do
+    raise NotImplementedError
+  end
+  
+  
 end
