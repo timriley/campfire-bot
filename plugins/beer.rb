@@ -15,14 +15,7 @@ class Beer < CampfireBot::Plugin
   on_command 'redeem_beer', :redeem_beer 
   on_command 'balance', :balance_cmd
   
-  # parties sort alphabetically
-  # albertjosh: 1  # alberts account with josh has a positive balance - i.e. josh owes albert 1 beer
-  # balance(albert, josh) = 1
-  # balance(josh, albert) = -1
-  
-  # albertjosh:-1  # alberts account with josh has a negative balance - i.e. albert owes josh 1 beer
-  # balance(albert, josh) = -1
-  # balance(josh, albert) = 1
+  # balances: {'josh' => {'party1' => 1 }, 'party1': '}
   
   class BadArgumentException < Exception
   end
@@ -101,9 +94,9 @@ class Beer < CampfireBot::Plugin
       
       case trans_type
       when :give
-        amt = amt * -1 # this is a credit
-      when :demand
         # no change - this is a debit
+      when :demand
+        amt = amt * -1 # this is a credit
       when :redeem
         # no change - this is a debit
         if bal = balance(speaker, payee) == 0
@@ -116,10 +109,10 @@ class Beer < CampfireBot::Plugin
       bal = balance(speaker, payee)
       
       # puts "post transaction balance = #{bal}"
-      if bal < 0
-        msg.speak("Okay, you now owe #{payee} #{bal * -1} beers")
-      elsif bal > 0
-        msg.speak("Okay, #{payee} now owes you #{bal} beers")
+      if bal > 0
+        msg.speak("Okay, you now owe #{payee} #{bal} beers")
+      elsif bal < 0
+        msg.speak("Okay, #{payee} now owes you #{bal * -1} beers")
       else
         msg.speak("Okay, you and #{payee} are now even")
       end
@@ -132,18 +125,26 @@ class Beer < CampfireBot::Plugin
   
   
   def beer_transaction(user1, user2, amount)
-    #beer_transaction user1, user2, -1 : user1 gives user2 a beer
-    #beer_transaction user1, user2, 1 : user2 gives user1 a beer
+    #beer_transaction user1, user2, 1 : user1 owes user2 a beer
+    #beer_transaction user1, user2, -1 : user1 demands a beer from user2 (user1 owes user2 -1 beers)
     @balances = init()
     # puts 'beer_transaction'
-    # p "beer_transaction start: #{@balances.inspect}"
-    hash = get_hash(user1, user2)
-    if !@balances.key?(hash)
-      @balances[hash] = 0
+    p "beer_transaction start: #{@balances.inspect}"
+    p "beer_transaction args: #{user1}, #{user2}, #{amount}"
+    user1 = user1.downcase.strip
+    user2 = user2.downcase.strip
+    
+    if !@balances.key?(user1)
+      @balances[user1] = {}
     end
-    amount = amount * -1 if [user1, user2].sort[0] == user1 # reverse amount if not in same order as hash
-    @balances[hash] -= amount
-    # p "beer_transaction end: #{@balances.inspect}"
+    
+    if !@balances[user1].key?(user2)
+      @balances[user1][user2] = 0
+    end
+    
+    @balances[user1][user2] += amount
+    
+    p "beer_transaction end: #{@balances.inspect}"
     write
     
   end
@@ -151,24 +152,30 @@ class Beer < CampfireBot::Plugin
   
   
   def balance(user1, user2)
-    # parties sort alphabetically
-    # albertjosh: 1  # alberts account with josh has a positive balance - i.e. josh owes albert 1 beer
-    # balance(albert, josh) = 1
-    # balance(josh, albert) = -1
-
-    # albertjosh:-1  # alberts account with josh has a negative balance - i.e. albert owes josh 1 beer
-    # balance(albert, josh) = -1
-    # balance(josh, albert) = 1
+    # verb => user1 owes user2 #{balance} beers
+    # bal(user1, user2) = 1 # user1 is owed a beer from user2
+    # bal(user1, user2) = -1 # user1 is owed -1 beers from user 2 (meaning user2 owes user1)
+    
     @balances = init()
-    hash = get_hash(user1, user2)
-    puts "hash is #{hash}, @balances[#{hash}] = #{@balances[hash]}"
-    bal = @balances[hash]
-    if bal.nil? 
-      0
-    else
-      bal = bal * -1 if [user1, user2].sort[0] == user2 # reverse balance if not in same order as hash
-      bal
+    
+    # puts "hash is #{hash}, @balances[#{hash}] = #{@balances[hash]}"
+    user1 = user1.downcase.strip
+    user2 = user2.downcase.strip
+    
+    if @balances.key?(user1) and @balances[user1].key?(user2)
+      bal1 = @balances[user1][user2]
+    else 
+      bal1 = 0
     end
+    
+    if @balances.key?(user2) and @balances[user2].key?(user1)
+      bal2 = @balances[user2][user1]
+    else 
+      bal2 = 0
+    end
+    
+    bal = bal1 - bal2
+    bal
   end
     
   def get_hash(user_1, user_2)
