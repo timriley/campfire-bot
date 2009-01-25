@@ -11,9 +11,8 @@ require "#{BOT_ROOT}/lib/plugin"
 # This requires my fork of tinder for the time being
 # gem sources -a http://gems.github.com
 # sudo gem install timriley-tinder
-# require 'tinder'
-require "#{BOT_ROOT}/../tinder/lib/tinder"
-
+gem 'timriley-tinder'
+require 'tinder'
 
 module CampfireBot
   class Bot
