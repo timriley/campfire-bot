@@ -33,6 +33,7 @@ class Beer < CampfireBot::Plugin
   end
   
   def balance_cmd(msg)
+    @balances = init()
     begin
       if msg[:message].empty?
         return
@@ -42,18 +43,18 @@ class Beer < CampfireBot::Plugin
       speaker = msg[:person]
       payee = msg[:message]
       
-      if !@balances.key?(get_hash(speaker, payee))
+      bal = balance(speaker, payee)
+      
+      if bal.nil? 
         raise BadArgumentException.new, "Sorry, you don't have any beer transactions with anyone named #{payee}"
       end
       
-      bal = balance(speaker, payee)
-
       units = bal.abs == 1 ? "beer" : "beers"
       
-      if bal > 0
-        msg.speak("#{payee} owes you #{bal} #{units}")
-      elsif bal < 0
-        msg.speak("You owe #{payee} #{bal * -1} #{units}")
+      if bal < 0
+        msg.speak("#{payee} owes you #{bal * -1} #{units}")
+      elsif bal > 0
+        msg.speak("You owe #{payee} #{bal} #{units}")
       else
         msg.speak("You and #{payee} are even")
       end
@@ -98,6 +99,7 @@ class Beer < CampfireBot::Plugin
       when :demand
         amt = amt * -1 # this is a credit
       when :redeem
+        amt = amt * -1 # this is a credit
         # no change - this is a debit
         if bal = balance(speaker, payee) == 0
           raise BadArgumentException.new, "#{payee} didn't owe you any beers to begin with."
@@ -129,8 +131,8 @@ class Beer < CampfireBot::Plugin
     #beer_transaction user1, user2, -1 : user1 demands a beer from user2 (user1 owes user2 -1 beers)
     @balances = init()
     # puts 'beer_transaction'
-    p "beer_transaction start: #{@balances.inspect}"
-    p "beer_transaction args: #{user1}, #{user2}, #{amount}"
+    # p "beer_transaction start: #{@balances.inspect}"
+    # p "beer_transaction args: #{user1}, #{user2}, #{amount}"
     user1 = user1.downcase.strip
     user2 = user2.downcase.strip
     
@@ -144,7 +146,7 @@ class Beer < CampfireBot::Plugin
     
     @balances[user1][user2] += amount
     
-    p "beer_transaction end: #{@balances.inspect}"
+    # p "beer_transaction end: #{@balances.inspect}"
     write
     
   end
@@ -175,6 +177,11 @@ class Beer < CampfireBot::Plugin
     end
     
     bal = bal1 - bal2
+    
+    if @balances.key?(user1) and !@balances[user1].key?(user2) or @balances.key?(user2) and !@balances[user2].key?(user1)
+      bal = nil
+    end
+    
     bal
   end
     
