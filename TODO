@@ -54,7 +54,7 @@
 
 - plugin: svn commit notification (multiple repos)
 
-- alternative addressing syntax - (!command)
+- help plugin-- extend plugin class to provide help for each registered command
 
 
 DONE
