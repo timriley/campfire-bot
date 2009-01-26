@@ -12,7 +12,7 @@ class SpecMessage < CampfireBot::Message
   
   #overwrite message.speak method so that we can expose the output
   def speak(msg)
-    puts "specmessage.speak(#{msg})"
+    # puts "specmessage.speak(#{msg})"
     @response = msg
   end
   
@@ -24,10 +24,10 @@ end
 
 # send a message to the room and return the response
 def sendmsg(msg)
-  puts "sendmsg(#{msg})"
+  # puts "sendmsg(#{msg})"
   @message[:message] = msg
   bot.send(:handle_message, @message)
-  puts "sendmsg returns #{@message.response}"
+  # puts "sendmsg returns #{@message.response}"
   @message.response
 end
 
@@ -98,11 +98,12 @@ describe "demanding beer" do
     sendmsg("!demand_beer albert")
   end
   
-  it "should increase my balance with the opposite party" do
+  it "should decrease my balance with the opposite party" do
     bal = @beer.balance('Josh', 'Foo')
-    p "initial bal is #{bal}"
+    # p "initial bal is #{bal}"
     sendmsg '!demand_beer Foo'
-    @beer.balance('Josh', 'Foo').should eql(bal + 1)
+    puts @beer.balance('Josh', 'Foo')
+    @beer.balance('Josh', 'Foo').should eql(bal - 1)
   end
   
 end
@@ -118,16 +119,19 @@ describe "redeeming beer" do
     
   end
   
-  it "should increase my balance with the opposite party" do
-    @beer.balances['albertjosh'] = 5
+  it "should decrease my balance with the opposite party" do
+    sendmsg '!demand_beer albert'
+    sendmsg '!demand_beer albert'
+    bal = @beer.balance('Josh', 'albert')
+    # puts "------  #{bal}"
     sendmsg '!redeem_beer albert'
-    @beer.balance('Josh', 'albert').should eql(4)    
+    @beer.balance('Josh', 'albert').should eql(bal - 1)
   end
   
-  it "should not increase my balance if it is already zero" do
-    @beer.balances['billjosh'] = 0
-    puts sendmsg("!redeem_beer bill").should =~ /to begin with/
-    @beer.balance('Josh', 'bill').should eql(0)
+  it "should not decrease my balance if it is already zero" do
+    @beer.should_receive('balance').with('Josh', 'bill').and_return(0)
+    sendmsg("!redeem_beer bill").should =~ /to begin with/
+    # @beer.balance('Josh', 'bill').should eql(bal)
   end
 end
 
@@ -139,17 +143,18 @@ describe "should have the correct reply for" do
   end
 
   it "negative balances (I owe beers)" do
-    @beer.balances['jamesjosh'] = 0
+    @beer.should_receive('balance').with('Josh', 'james').and_return(1)
     sendmsg("!give_beer james").should =~ /you now owe james .* beer/
   end
   
   it "positive balances (I am owed beers)" do
-    @beer.balances['albertjosh'] = 0
+    @beer.balances['albert'] = {}
+    @beer.balances['albert']['Josh'] = 1
     sendmsg("!demand_beer albert").should =~ /albert now owes you .* beer/
   end
   
   it "zero balance (all even)" do
-    @beer.balances['albertjosh'] = -1
+    @beer.should_receive('balance').with('Josh', 'albert').and_return(0)
     sendmsg("!give_beer albert").should =~ /albert .* even/
   end
   
@@ -163,7 +168,7 @@ describe "should have the correct reply for" do
   
 end
 
-describe "balance? command" do
+describe "!balance command" do
   before(:each) do
     setup
   end
@@ -178,14 +183,18 @@ describe "balance? command" do
   end
   
   describe "should return the correct balance for" do
-    it "positive balances" do
-      @beer.balances['foojosh'] = -1
-      sendmsg("!balance Foo").should =~ /owes you 1 beer/
+    it "negative balances" do
+      sendmsg("!demand_beer maxim 2")
+      # @beer.balance('Josh', 'max').should eql(-2)
+      # @beer.should_receive('balance').with('Josh', 'Foo').and_return(-1)
+      sendmsg("!balance maxim").should =~ /owes you 2 beers/
     end
     
-    it "negative balances" do
-      @beer.balances['foojosh'] = 1
-      sendmsg("!balance Foo").should =~ /You owe Foo 1 beer/
+    it "positive balances" do
+      sendmsg("!give_beer maximo 9")
+      # @beer.balance('Josh', 'max').should eql(7)
+      # @beer.should_receive('balance').with('Josh', 'Foo').and_return(1)
+      sendmsg("!balance maximo").should =~ /You owe .* 9 beers/
     end
     
     it "non-existent balances" do
