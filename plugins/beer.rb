@@ -45,10 +45,6 @@ class Beer < CampfireBot::Plugin
       
       bal = balance(speaker, payee)
       
-      if bal.nil? 
-        raise BadArgumentException.new, "Sorry, you don't have any beer transactions with anyone named #{payee}"
-      end
-      
       units = bal.abs == 1 ? "beer" : "beers"
       
       if bal < 0
@@ -99,7 +95,7 @@ class Beer < CampfireBot::Plugin
       when :demand
         amt = amt * -1 # this is a credit
       when :redeem
-        amt = amt * -1 # this is a credit
+        # amt = amt * -1 # this is a credit
         # no change - this is a debit
         if bal = balance(speaker, payee) == 0
           raise BadArgumentException.new, "#{payee} didn't owe you any beers to begin with."
@@ -178,8 +174,9 @@ class Beer < CampfireBot::Plugin
     
     bal = bal1 - bal2
     
-    if @balances.key?(user1) and !@balances[user1].key?(user2) or @balances.key?(user2) and !@balances[user2].key?(user1)
-      bal = nil
+    if (@balances.key?(user1) ? !@balances[user1].key?(user2) : true) and 
+      (@balances.key?(user2) ? !@balances[user2].key?(user1) : true)
+      raise BadArgumentException.new, "Sorry, you don't have any beer transactions with anyone named #{user2}"
     end
     
     bal

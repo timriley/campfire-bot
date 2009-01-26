@@ -57,26 +57,31 @@ describe "giving beer" do
   
 
   it "should increase my balance with Foo" do
-    bal = @beer.balance('Josh', 'Foo')
-    p "initial bal is #{bal}"
+    bal = 0
     sendmsg '!give_beer Foo'
     @beer.balance('Josh', 'Foo').should eql(bal + 1)
   end
 
   
   it "should say back to me what my balance is" do
-     bal = @beer.balance('Josh', 'Foo') - 1
-     sendmsg('!give_beer bruce').should =~ /#{bal.abs}/
+     
+     sendmsg('!give_beer bruce').should =~ /1/
   end
   
   it "should accept an argument of the number of beers to credit" do
-    bal = @beer.balance('Josh', 'harvey') + 2
+    bal = 2
     sendmsg('!give_beer harvey 2')
     @beer.balance('Josh', 'harvey').should eql(bal)
   end
 
-  it "should handle nicely names with spaces in them" do
-    bal = @beer.balance('Josh', 'harvey D.') + 2
+  it "should handle nicely names with spaces in them with no argument" do
+    bal = 1
+    sendmsg('!give_beer harvey A.')
+    @beer.balance('Josh', 'harvey A.').should eql(bal)
+  end
+
+  it "should handle nicely names with spaces in them and an argument" do
+    bal = 2
     sendmsg('!give_beer harvey D. 2')
     @beer.balance('Josh', 'harvey D.').should eql(bal)
   end
@@ -99,7 +104,7 @@ describe "demanding beer" do
   end
   
   it "should decrease my balance with the opposite party" do
-    bal = @beer.balance('Josh', 'Foo')
+    bal = 0
     # p "initial bal is #{bal}"
     sendmsg '!demand_beer Foo'
     puts @beer.balance('Josh', 'Foo')
@@ -119,16 +124,16 @@ describe "redeeming beer" do
     
   end
   
-  it "should decrease my balance with the opposite party" do
+  it "should increase my balance with the opposite party (redeeming is the same as giving)" do
     sendmsg '!demand_beer albert'
     sendmsg '!demand_beer albert'
     bal = @beer.balance('Josh', 'albert')
     # puts "------  #{bal}"
     sendmsg '!redeem_beer albert'
-    @beer.balance('Josh', 'albert').should eql(bal - 1)
+    @beer.balance('Josh', 'albert').should eql(bal + 1)
   end
   
-  it "should not decrease my balance if it is already zero" do
+  it "should not increase my balance if it is already zero" do
     @beer.should_receive('balance').with('Josh', 'bill').and_return(0)
     sendmsg("!redeem_beer bill").should =~ /to begin with/
     # @beer.balance('Josh', 'bill').should eql(bal)
@@ -162,9 +167,9 @@ describe "should have the correct reply for" do
     sendmsg("!give_beer").should =~ /don't know whom/
   end
   
-  it "non-integer 2nd arg" do
-    sendmsg("!give_beer albert non-int").should =~ /I don't accept non-integer amounts/
-  end
+  # it "non-integer 2nd arg" do
+  #     sendmsg("!give_beer albert non-int").should =~ /I don't accept non-integer amounts/
+  #   end
   
 end
 
@@ -206,7 +211,7 @@ end
 
 describe "beer_transactiona and balance" do
   it "should handle equivalent transactions equivalently" do
-    raise NotImplementedError
+    pending
   end
   
   
