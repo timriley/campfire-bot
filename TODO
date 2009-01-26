@@ -67,3 +67,5 @@ DONE
   http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/136555
   http://jerith.livejournal.com/40063.html
   http://rails.lighthouseapp.com/projects/8994/tickets/6-patch-activeresource-connection-should-rescue-from-timeout-error
+
+- alternative addressing syntax (!command)
