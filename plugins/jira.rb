@@ -7,7 +7,7 @@ class Jira < CampfireBot::Plugin
   at_interval 3.minutes, :fetch_jira
   on_command 'checkjira', :check_jira
 
-  def fetch_jira(msg = nil)
+  def fetch_jira(msg)
     @last_checked ||= 10.minutes.ago
     issuecount = 0
     
@@ -32,7 +32,7 @@ class Jira < CampfireBot::Plugin
          reporter = ele.elements['reporter'].text
          type = ele.elements['type'].text
          priority = ele.elements['priority'].text
-         speak("#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}")
+         msg.speak("#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}")
          puts "#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}"
         end
       end
@@ -40,15 +40,15 @@ class Jira < CampfireBot::Plugin
       @last_checked = Time.now
       puts "no new issues." if issuecount == 0
       issuecount
-    rescue 
-      puts "error connecting to jira"
+    rescue Exception => e
+      puts "error connecting to jira: #{e.message}"
     end
   end
   
-  def check_jira(msg = nil)
-    count = fetch_jira()
+  def check_jira(msg)
+    count = fetch_jira(msg)
     lastlast = time_ago_in_words(@last_checked)
-    speak "no new issues since I last checked #{lastlast} ago" if count == 0
+    msg.speak "no new issues since I last checked #{lastlast} ago" if count == 0
   end
   
   protected
