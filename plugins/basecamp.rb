@@ -24,10 +24,10 @@ class Basecamp < CampfireBot::Plugin
     # Prime the cookie jar: log in.
     basecamp_login      = `curl -c #{@cookie_jar} -b #{@cookie_jar} -d "user_name=#{@username}&password=#{@password}" -L http#{'s' if @ssl}://#{@domain}/login/authenticate`
     
-    # Now fetch the contents of the writeboard redirect page
+    # Fetch the contents of the writeboard redirect page
     writeboard_redir    = `curl -c #{@cookie_jar} -b #{@cookie_jar} -L #{@writeboard}`
     
-    # Now simulate the javascripted login to the writeboard site
+    # Simulate the javascripted login to the writeboard site
     redir_form          = Hpricot(writeboard_redir).search('form').first
     writeboard_url      = redir_form['action'].gsub(/\/login$/, '')
     writeboard_author   = bot.config['nickname']
@@ -40,6 +40,7 @@ class Basecamp < CampfireBot::Plugin
     
     export_link         = 'http://123.writeboard.com' + writeboard_page.search("a[@href*='?format=txt']").first['href']
     
+    # Finally, grab the text export
     writeboard_text     = `curl -c #{@cookie_jar} -b #{@cookie_jar} #{export_link}`
     
     return writeboard_text

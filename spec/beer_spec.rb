@@ -1,6 +1,6 @@
 require 'spec'
 BOT_ROOT        = File.join(File.dirname(__FILE__), '..')
-BOT_ENVIRONMENT = 'development'
+BOT_ENVIRONMENT = 'test'
 
 require File.join(File.dirname(__FILE__), '../lib/bot.rb')
 bot = CampfireBot::Bot.instance
@@ -213,6 +213,4 @@ describe "beer_transactiona and balance" do
   it "should handle equivalent transactions equivalently" do
     pending
   end
-  
-  
 end
