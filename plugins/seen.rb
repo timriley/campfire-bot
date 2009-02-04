@@ -1,10 +1,10 @@
 # Courtesy of joshwand (http://github.com/joshwand)
 class Seen < CampfireBot::Plugin
   ACTIVITY_REGEXP = /^(.*)$/
-  SEEN_REGEXP = /(seen) ([^\?]+)(?=\?)*/
+  SEEN_REGEXP = /([^\?]+)(?=\?)*/
   
   on_message Regexp.new("#{ACTIVITY_REGEXP.source}", Regexp::IGNORECASE), :update
-  on_message Regexp.new("^#{bot.config['nickname']},\\s+#{SEEN_REGEXP.source}", Regexp::IGNORECASE), :seen
+  on_command 'seen', :seen
   on_command 'reload_seen', :reload
   
   def initialize
@@ -23,9 +23,11 @@ class Seen < CampfireBot::Plugin
   
   def seen(msg)
     found = false
+    puts msg[:message]
+    puts msg[:message] =~ SEEN_REGEXP
     
-    if !$2.nil?
-      first_name = $2.match("[A-Za-z]+")[0]
+    if !$1.nil?
+      first_name = $1.match("[A-Za-z]+")[0]
       
       @seen.each do |person, seenat|
         if person.downcase.include?(first_name.downcase)
