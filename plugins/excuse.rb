@@ -468,7 +468,7 @@ class Excuse < CampfireBot::Plugin
     
     excuse = excuses[rand(excuses.size)].gsub("_", " ")
      
-    speak("Your excuse is: #{excuse}")
+    msg.speak("Your excuse is: #{excuse}")
   end
  
 
