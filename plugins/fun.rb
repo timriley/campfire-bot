@@ -42,6 +42,6 @@ class Fun < CampfireBot::Plugin
   def howareya(m)
     messages = ["just great", "peachy", "mas o menos", 
     	 "you know how it is", "eh, ok", "pretty good. how about you?"]
-    speak(messages[rand(messages.size)])
+    m.speak(messages[rand(messages.size)])
   end
 end

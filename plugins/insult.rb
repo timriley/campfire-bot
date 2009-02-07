@@ -12,7 +12,7 @@ class Insult < CampfireBot::Plugin
     out = "#{msg[:message]}, you are nothing but a #{adj1} #{amount} of #{adj2} #{noun}"
  
  
-    speak(out)
+    msg.speak(out)
   end
  
   
