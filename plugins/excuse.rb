@@ -464,6 +464,7 @@ class Excuse < CampfireBot::Plugin
     Someone_set_us_up_the_bomb.
     Power_surges_on_the_Underground.
     Don't_worry;_it's_been_deprecated._The_new_one_is_worse.
+    My_raccoon_has_hepatitis.
     )
     
     excuse = excuses[rand(excuses.size)].gsub("_", " ")
