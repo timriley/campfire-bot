@@ -26,6 +26,7 @@ end
 def sendmsg(msg)
   # puts "sendmsg(#{msg})"
   @message[:message] = msg
+  @message[:room] = mock('room', :name => 'test')
   bot.send(:handle_message, @message)
   # puts "sendmsg returns #{@message.response}"
   @message.response
