@@ -11,11 +11,12 @@ class Jira < CampfireBot::Plugin
   def initialize
     @data_file  = File.join(BOT_ROOT, 'tmp', "jira-#{BOT_ENVIRONMENT}-#{bot.config['room']}.yml")
     @cached_ids = YAML::load(File.read(@data_file)) rescue {}
+    @last_checked ||= 10.minutes.ago
   end
   
 
   def fetch_jira(msg)
-    @last_checked ||= 10.minutes.ago
+    
     issuecount = 0
     @cached_ids ||= {}
     
@@ -57,13 +58,12 @@ class Jira < CampfireBot::Plugin
       issuecount
     rescue Exception => e
       puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | error connecting to jira: #{e.message}"
-      raise
     end
   end
   
   def check_jira(msg)
-    count = fetch_jira(msg)
     lastlast = time_ago_in_words(@last_checked)
+    count = fetch_jira(msg)
     msg.speak "no new issues since I last checked #{lastlast} ago" if count == 0
   end
   
