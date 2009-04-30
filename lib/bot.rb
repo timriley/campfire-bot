@@ -76,7 +76,7 @@ module CampfireBot
       else
         join_rooms_as_user
       end
-      puts "Ready."
+      puts "#{Time.now} | #{BOT_ENVIRONMENT} | Loader | Ready."
     end
     
     def join_rooms_as_guest
@@ -99,14 +99,14 @@ module CampfireBot
     def load_plugins
       Dir["#{BOT_ROOT}/plugins/*.rb"].each do |x| 
         # skip disabled plugins
-        if @config['disable_plugins'].select{|name| x.include?(name)}.count == 0
+        if @config['disable_plugins'].select{|name| x.include?(name)}.size == 0
           load x
         end
       end
       
       # And instantiate them
       Plugin.registered_plugins.each_pair do |name, klass|
-        puts "loading plugin: #{name}"
+        puts "#{Time.now} | #{BOT_ENVIRONMENT} | Loader | loading plugin: #{name}"
         STDOUT.flush
         Plugin.registered_plugins[name] = klass.new
       end
