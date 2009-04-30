@@ -6,12 +6,20 @@ class Jira < CampfireBot::Plugin
   
   at_interval 3.minutes, :fetch_jira
   on_command 'checkjira', :check_jira
+  
+  
+  def initialize
+    @data_file  = File.join(BOT_ROOT, 'tmp', "jira-#{BOT_ENVIRONMENT}-#{bot.config['room']}.yml")
+    @cached_ids = YAML::load(File.read(@data_file)) rescue {}
+  end
+  
 
   def fetch_jira(msg)
     @last_checked ||= 10.minutes.ago
     issuecount = 0
+    @cached_ids ||= {}
     
-    puts "checking jira for new issues..."
+    puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | checking jira for new issues..."
     begin
       xmldata = open(bot.config['jira_url']).read
     
@@ -19,29 +27,37 @@ class Jira < CampfireBot::Plugin
 
       doc = REXML::Document.new(xmldata)
 
+      old_cache = @cached_ids
       doc.elements.each('rss/channel/item') do |ele|
-
-        timestamp = ele.elements['created'].text
+        timestamp = ele.elements['updated'].text
         timestamp = Time.parse(timestamp) 
-        # puts "timestamp: #{timestamp}"
-        # puts "@last_checked #{@last_checked}"
-        if timestamp > @last_checked
-         issuecount += 1
-         link = ele.elements['link'].text
-         title = ele.elements['title'].text
-         reporter = ele.elements['reporter'].text
-         type = ele.elements['type'].text
-         priority = ele.elements['priority'].text
-         msg.speak("#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}")
-         puts "#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}"
+        
+        id = ele.elements['key'].text
+        id = split_spacekey_and_id(id)
+         
+        if !old_cache.key?(id[:key]) or old_cache[id[:key]] < id[:id]
+          @cached_ids[id[:key]] = id[:id] if !@cached_ids.key?(id[:id]) or @cached_ids[id[:key]] < id[:id]
+          issuecount += 1
+          link = ele.elements['link'].text
+          title = ele.elements['title'].text
+          reporter = ele.elements['reporter'].text
+          type = ele.elements['type'].text
+          priority = ele.elements['priority'].text
+          msg.speak("#{type} - #{title} - #{link} - reported by #{reporter} - #{priority}")
+          puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | #{type} - #{title} - #{link} - reported by #{reporter} - #{priority}"
         end
       end
 
+      File.open(@data_file, 'w') do |out|
+        YAML.dump(@cached_ids, out)
+      end
+
       @last_checked = Time.now
-      puts "no new issues." if issuecount == 0
+      puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | no new issues." if issuecount == 0
       issuecount
     rescue Exception => e
-      puts "error connecting to jira: #{e.message}"
+      puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | error connecting to jira: #{e.message}"
+      raise
     end
   end
   
@@ -52,6 +68,12 @@ class Jira < CampfireBot::Plugin
   end
   
   protected
+  
+  def split_spacekey_and_id(key)
+    spacekey = key.scan(/^([A-Z]+)/).to_s
+    id = key.scan(/([0-9]+)$/)[0].to_s.to_i
+    {:id => id, :key => spacekey}
+  end
   
   def time_ago_in_words(from_time, include_seconds = false)
     distance_of_time_in_words(from_time, Time.now, include_seconds)
