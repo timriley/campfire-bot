@@ -8,9 +8,12 @@ class Unfuddle < CampfireBot::Plugin
   
   def initialize
     @last_item = 12.hours.ago
-    @http = Net::HTTP.new(bot.config['unfuddle_domain'], 443)
-    @http.use_ssl = true
-    @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    @http = Net::HTTP.new(bot.config['unfuddle_domain'], bot.config['unfuddle_port'])
+
+    if bot.config['unfuddle_port'] == 443
+      @http.use_ssl = true
+      @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
   end
 
   def fetch_rss(msg)
