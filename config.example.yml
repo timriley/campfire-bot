@@ -10,8 +10,14 @@ development:
   twitter_feed: 'http://search.twitter.com/search.atom?q=from%3Atimriley+OR+from%3Ahughevans+OR+from%3Aschlick+OR+from%3Aseanodowd'
   twitter_hide_replies: false
   disable_plugins: 
-    - xkcd
+    - bugzilla
+    - jira
+    - infobot
+    - insult
+    - signal_filter
+    - twitter_echo
     - basecamp
+    - unfuddle
 production:
   site: campfire_subdomain_name
   use_ssl: true
@@ -23,5 +29,11 @@ production:
   twitter_feed: 'http://search.twitter.com/search.atom?q=from%3Atimriley+OR+from%3Ahughevans+OR+from%3Aschlick+OR+from%3Aseanodowd'
   twitter_hide_replies: false
   disable_plugins: 
-    - xkcd
+    - bugzilla
+    - jira
+    - infobot
+    - insult
+    - signal_filter
+    - twitter_echo
     - basecamp
+    - unfuddle
