@@ -8,7 +8,7 @@ class Unfuddle < CampfireBot::Plugin
   
   def initialize
     @last_item = 12.hours.ago
-    @http = Net::HTTP.new('amc.unfuddle.com', 443)
+    @http = Net::HTTP.new(bot.config['unfuddle_domain'], 443)
     @http.use_ssl = true
     @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
   end
