@@ -116,9 +116,9 @@ module CampfireBot
       puts
       puts message.inspect
     
-      Plugin.registered_commands.each { |handler| handler.run(message) }
-      Plugin.registered_speakers.each { |handler| handler.run(message) }
-      Plugin.registered_messages.each { |handler| handler.run(message) }
+      Plugin.registered_commands.each { |handler| begin; handler.run(message); rescue; puts "error running #{handler.inspect}"; end }
+      Plugin.registered_speakers.each { |handler| begin; handler.run(message); rescue; puts "error running #{handler.inspect}"; end }
+      Plugin.registered_messages.each { |handler| begin; handler.run(message); rescue; puts "error running #{handler.inspect}"; end }
     end
   end
 end
