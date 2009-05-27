@@ -206,6 +206,11 @@ describe "checking jira and" do
     
     it "with all new" do
       @jira.cached_ids = {}
+      
+      msg = SpecMessage.new(:person => 'Josh', :room => mock('room', :name => 'test'))
+      SpecMessage.should_receive(:new).and_return(msg)
+      msg.should_receive(:speak).twice
+
       jira_response([{
         'key' => 'PIM-1123', 
         'updated' => 5.minutes.ago.to_s
@@ -213,6 +218,7 @@ describe "checking jira and" do
         {'key' => 'PIM-1124', 
         'updated' => 5.minutes.ago.to_s}])  
       @jira.cached_ids['PIM'].should eql(1124)
+
     end
 
     it "with a mix of old and new" do
