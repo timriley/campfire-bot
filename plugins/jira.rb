@@ -19,25 +19,24 @@ class Jira < CampfireBot::Plugin
     
     issuecount = 0
     @cached_ids ||= {}
+    old_cache = @cached_ids
     
     puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | checking jira for new issues..."
-    begin
-      xmldata = open(bot.config['jira_url']).read
-    
-      # puts xmldata
 
+    begin
+
+      xmldata = open(bot.config['jira_url']).read
       doc = REXML::Document.new(xmldata)
 
-      old_cache = @cached_ids
       doc.elements.each('rss/channel/item') do |ele|
-        timestamp = ele.elements['updated'].text
-        timestamp = Time.parse(timestamp) 
-        
+
         id = ele.elements['key'].text
         id = split_spacekey_and_id(id)
          
         if !old_cache.key?(id[:key]) or old_cache[id[:key]] < id[:id]
+
           @cached_ids[id[:key]] = id[:id] if !@cached_ids.key?(id[:id]) or @cached_ids[id[:key]] < id[:id]
+
           issuecount += 1
           link = ele.elements['link'].text
           title = ele.elements['title'].text
