@@ -19,8 +19,7 @@ class Jira < CampfireBot::Plugin
     
     issuecount = 0
     @cached_ids ||= {}
-    old_cache = @cached_ids
-    
+    old_cache = Marshal::load(Marshal.dump(@cached_ids)) # since ruby doesn't have deep copy
     puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | checking jira for new issues..."
 
     begin
