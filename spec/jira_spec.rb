@@ -45,6 +45,11 @@ describe "checking jira and" do
   def setup
     bot = CampfireBot::Bot.instance
     bot.stub!(:config).and_return({'nickname' => 'Bot', 'jira_url' => 'foo'})
+    YAML.stub!(:load).and_return {}
+    YAML.stub!(:dump).and_return true
+    
+    
+    
     @jira = SpecJira.new()
     CampfireBot::Plugin.registered_plugins['Jira'] = @jira
     @jira.cached_ids = {}
