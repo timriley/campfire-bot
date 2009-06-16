@@ -71,12 +71,8 @@ describe "checking jira and" do
      
      jira_hash['rss']['channel'] << {'item' => ticket }
     end
-    
-    
-    @message = SpecMessage.new(:person => 'Josh', :room => mock('room', :name => 'test'))
 
-    
-    
+    @message = SpecMessage.new(:person => 'Josh', :room => mock('room', :name => 'test'))
     
     xmldata = XmlSimple.xml_out(jira_hash, {'NoAttr' => true, 'RootName' => nil})
     
@@ -227,14 +223,22 @@ describe "checking jira and" do
     end
 
     it "with a mix of old and new" do
+      msg = SpecMessage.new(:person => 'Josh', :room => mock('room', :name => 'test'))
+      SpecMessage.should_receive(:new).and_return(msg)
+      msg.should_receive(:speak).twice
+      
       @jira.cached_ids['PIM'] = 1124
       jira_response([{
         'key' => 'PIM-1125', 
         'updated' => 5.minutes.ago.to_s
-        }, 
+        },
+        {
+         'key' => 'PIM-1126', 
+         'updated' => 5.minutes.ago.to_s
+        },
         {'key' => 'PIM-1124', 
         'updated' => 5.minutes.ago.to_s}])  
-      @jira.cached_ids['PIM'].should eql(1125)
+      @jira.cached_ids['PIM'].should eql(1126)
     end
     
     it "with all old" do
