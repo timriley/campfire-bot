@@ -213,10 +213,10 @@ describe "checking jira and" do
       msg.should_receive(:speak).twice
 
       jira_response([{
-        'key' => 'PIM-1123', 
+        'key' => 'PIM-1124', 
         'updated' => 5.minutes.ago.to_s
         }, 
-        {'key' => 'PIM-1124', 
+        {'key' => 'PIM-1123', 
         'updated' => 5.minutes.ago.to_s}])  
       @jira.cached_ids['PIM'].should eql(1124)
 
@@ -229,22 +229,25 @@ describe "checking jira and" do
       
       @jira.cached_ids['PIM'] = 1124
       jira_response([{
-        'key' => 'PIM-1125', 
-        'updated' => 5.minutes.ago.to_s
-        },
-        {
          'key' => 'PIM-1126', 
          'updated' => 5.minutes.ago.to_s
         },
-        {'key' => 'PIM-1124', 
-        'updated' => 5.minutes.ago.to_s}])  
+        {
+          'key' => 'PIM-1125', 
+          'updated' => 5.minutes.ago.to_s
+          },
+        {
+          'key' => 'PIM-1124', 
+        'updated' => 5.minutes.ago.to_s
+        }
+      ])  
       @jira.cached_ids['PIM'].should eql(1126)
     end
     
     it "with all old" do
       @jira.cached_ids['PIM'] = 1125
       jira_response([{
-        'key' => 'PIM-1123', 
+        'key' => 'PIM-1125', 
         'updated' => 5.minutes.ago.to_s
         }, 
         {'key' => 'PIM-1124', 

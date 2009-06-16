@@ -9,6 +9,7 @@ class Jira < CampfireBot::Plugin
   
   
   def initialize
+    puts "#{Time.now} | #{bot.config['room']} | JIRA Plugin | initializing... "
     @data_file  = File.join(BOT_ROOT, 'tmp', "jira-#{BOT_ENVIRONMENT}-#{bot.config['room']}.yml")
     @cached_ids = YAML::load(File.read(@data_file)) rescue {}
     @last_checked ||= 10.minutes.ago
@@ -27,11 +28,17 @@ class Jira < CampfireBot::Plugin
       xmldata = open(bot.config['jira_url']).read
       doc = REXML::Document.new(xmldata)
 
+      
+      tix = []
       doc.elements.each('rss/channel/item') do |ele|
-
+        tix.push(ele)
+      end
+      
+      # need to reverse these elements so we get the oldest one first
+      tix.reverse.each do |ele|
         id = ele.elements['key'].text
         id, key = split_spacekey_and_id(id)
-         
+       
         if !old_cache.key?(key) or old_cache[key] < id
 
           puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | ticket #{ele.elements['key'].text} is new, updating cache and speaking"
@@ -47,17 +54,19 @@ class Jira < CampfireBot::Plugin
           puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | #{type} - #{title} - #{link} - reported by #{reporter} - #{priority}"
         end
       end
-
-      File.open(@data_file, 'w') do |out|
-        YAML.dump(@cached_ids, out)
-      end
-
-      @last_checked = Time.now
-      puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | no new issues." if issuecount == 0
-      issuecount
+    
     rescue Exception => e
       puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | error connecting to jira: #{e.message}"
     end
+    
+    File.open(@data_file, 'w') do |out|
+      YAML.dump(@cached_ids, out)
+    end
+
+    @last_checked = Time.now
+    puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | no new issues." if issuecount == 0
+    issuecount
+  
   end
   
   def check_jira(msg)
