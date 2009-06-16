@@ -41,7 +41,7 @@ class Jira < CampfireBot::Plugin
        
         if !old_cache.key?(key) or old_cache[key] < id
 
-          puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | ticket #{ele.elements['key'].text} is new, updating cache and speaking"
+          # puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | ticket #{ele.elements['key'].text} is new, updating cache and speaking"
           @cached_ids[key] = id if !@cached_ids.key?(id) or @cached_ids[key] < id
 
           issuecount += 1
