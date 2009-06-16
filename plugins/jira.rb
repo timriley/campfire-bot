@@ -30,11 +30,12 @@ class Jira < CampfireBot::Plugin
       doc.elements.each('rss/channel/item') do |ele|
 
         id = ele.elements['key'].text
-        id = split_spacekey_and_id(id)
+        id, key = split_spacekey_and_id(id)
          
-        if !old_cache.key?(id[:key]) or old_cache[id[:key]] < id[:id]
+        if !old_cache.key?(key) or old_cache[key] < id
 
-          @cached_ids[id[:key]] = id[:id] if !@cached_ids.key?(id[:id]) or @cached_ids[id[:key]] < id[:id]
+          puts "#{Time.now} | #{msg[:room].name} | JIRA Plugin | ticket #{ele.elements['key'].text} is new, updating cache and speaking"
+          @cached_ids[key] = id if !@cached_ids.key?(id) or @cached_ids[key] < id
 
           issuecount += 1
           link = ele.elements['link'].text
@@ -70,7 +71,7 @@ class Jira < CampfireBot::Plugin
   def split_spacekey_and_id(key)
     spacekey = key.scan(/^([A-Z]+)/).to_s
     id = key.scan(/([0-9]+)$/)[0].to_s.to_i
-    {:id => id, :key => spacekey}
+    return id, spacekey
   end
   
   def time_ago_in_words(from_time, include_seconds = false)
