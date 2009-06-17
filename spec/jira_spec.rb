@@ -78,7 +78,7 @@ describe "checking jira and" do
     
     @jira.stub!(:open).and_return(mock('foo', :read => xmldata))
     
-    @jira.fetch_jira(@message)
+    @jira.check_jira(@message)
   end
 
   describe "seeing a ticket higher than the last stored id" do
