@@ -50,12 +50,6 @@ class OurQuotes < CampfireBot::Plugin
   # Configure with "our_quote_recall_command: quote"
   #on_command 'quote', :quote
 
-  def self.config_var(name, default)
-    attr_reader name
-    @@config_defaults ||= {}
-    @@config_defaults[name] = default
-  end
-
   config_var :data_file, File.join(BOT_ROOT, 'var', 'quote-log.yml')
   config_var :recall_command, "ourquote"
   config_var :debug_enabled, false
@@ -63,10 +57,7 @@ class OurQuotes < CampfireBot::Plugin
   attr_reader :use_htmlentities
 
   def initialize()
-    @@config_defaults.each_pair { |name, default|
-      instance_variable_set("@#{name.to_s}",
-                            bot.config["quote_#{name.to_s}"] || default)
-    }
+    super
 
     self.class.on_command recall_command.to_s, :quote
 

@@ -70,23 +70,6 @@ describe "Bugzilla plugin" do
   end
 end
 
-describe "config_var method" do
-  def setup_plugin(klass, config={})
-    @bot = CampfireBot::Bot.instance
-    @bot.stub!(:config).and_return({'nickname' => 'Bot'}.merge(config))
-    @plugin = klass.new
-    CampfireBot::Plugin.registered_plugins[klass.to_s] = @plugin
-  end
-  it "should setup default bug_url value" do
-    setup_plugin Bugzilla
-    @plugin.bug_url.should == "https://bugzilla/show_bug.cgi?id=%s"
-  end
-  it "should allow override of bug_url via bugzilla_bug_url configuration" do
-    setup_plugin Bugzilla, 'bugzilla_bug_url' => 'http://b/%s'
-    @plugin.bug_url.should == "http://b/%s"
-  end
-end
-
 describe "http_fetch_body method" do
   before(:each) do
   end

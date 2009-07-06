@@ -25,12 +25,6 @@ class Bugzilla < CampfireBot::Plugin
   on_command 'bug', :describe_command
   # on_message registered below...
 
-  def self.config_var(name, default)
-    attr_reader name
-    @@config_defaults ||= {}
-    @@config_defaults[name] = default
-  end
-
   config_var :data_file, File.join(BOT_ROOT, 'tmp', 'bugzilla.yml')
   config_var :min_period, 30.minutes
   config_var :debug_enabled, false
@@ -45,11 +39,7 @@ class Bugzilla < CampfireBot::Plugin
     :use_htmlentities, :use_netrc
 
   def initialize()
-    @@config_defaults.each_pair { |name, default|
-      instance_variable_set("@#{name.to_s}",
-                            bot.config["bugzilla_#{name.to_s}"] || default)
-    }
-
+    super
     @bug_id_regexp = Regexp.new(bug_id_pattern, Regexp::IGNORECASE)
     @mention_regexp = Regexp.new(sprintf(mention_pattern,
                                          bug_id_pattern, bug_word_pattern),

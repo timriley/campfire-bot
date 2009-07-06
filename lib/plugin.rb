@@ -53,6 +53,23 @@ module CampfireBot
           Plugin.registered_times << Event::Time.new(timestamp, self.to_s, method)
         end
       end
+
+      # Declare a plugin configuration parameter with its default value
+      def config_var(name, default)
+        attr_reader name
+        @@config_defaults ||= {}
+        @@config_defaults[self.name] ||= {}
+        @@config_defaults[self.name][name] = default
+      end
+    end
+    def initialize
+      # initialize attr_readers setup with config_var
+      config_prefix = self.class.to_s.underscore
+      (@@config_defaults[self.class.name] || {}).each_pair { |name, default|
+        instance_variable_set("@#{name.to_s}",
+                              bot.config["#{config_prefix}_#{name.to_s}"] ||
+                                default)
+      }
     end
   end
 end
