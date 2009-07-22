@@ -37,3 +37,6 @@ production:
     - twitter_echo
     - basecamp
     - unfuddle
+    - xkcd
+  svn_urls:
+    - http://your.svn/url/
