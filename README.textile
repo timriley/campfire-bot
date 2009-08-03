@@ -35,5 +35,6 @@ Tim Riley - "github":http://github.com/timriley | "www":http://openmonkey.com/ |
 h3. Contributors
 
 * Josh Wand - "github":http://github.com/joshwand
+* mcary - "github":http://github.com/mcary
 * Hugh Evans - "github":http://github.com/artpop
 * Sean O'Dowd - "github":http://github.com/seanodowd
