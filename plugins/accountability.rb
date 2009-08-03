@@ -21,6 +21,8 @@ class Accountability < CampfireBot::Plugin
       (@room.users - @informative_people).each do |person|
         @room.speak("#{person}: We haven't seen your INDAY today. So what's the plan?")
       end
+      
+      @informative_people.clear
     end
   end
 end
