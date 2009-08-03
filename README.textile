@@ -26,7 +26,7 @@ h2. Usage
 
 To run the bot, run @script/bot@ with the environment name as the argument:
 
-  script/bot.rb development
+  script/bot development
 
 h2. Authors
 
