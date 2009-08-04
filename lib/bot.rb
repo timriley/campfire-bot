@@ -8,11 +8,7 @@ require "#{BOT_ROOT}/lib/message"
 require "#{BOT_ROOT}/lib/event"
 require "#{BOT_ROOT}/lib/plugin"
 
-# This requires my fork of tinder for the time being
-# gem sources -a http://gems.github.com
-# sudo gem install timriley-tinder
-gem 'timriley-tinder'
-require 'tinder'
+gem 'tinder', '>= 1.2.0'; require 'tinder'
 
 module CampfireBot
   class Bot
