@@ -6,6 +6,7 @@ class Jira < CampfireBot::Plugin
   
   at_interval 3.minutes, :check_jira
   on_command 'checkjira', :checkjira_command
+  on_command 'jira', :checkjira_command
   
   
   def initialize
