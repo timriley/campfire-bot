@@ -15,9 +15,9 @@ class Jira < CampfireBot::Plugin
     @last_checked ||= 10.minutes.ago
   end
 
-  # respond to checkjira command-- same as interval except we answer with 'no issues found' if 
+  # respond to checkjira command-- same as interval except we answer with 'no issues found' if there are no issues
   def checkjira_command(msg)
-    msg.speak "no new issues since I last checked #{lastlast} ago" if check_jira(msg)
+    msg.speak "no new issues since I last checked #{@lastlast} ago" if !check_jira(msg)
   end
   
   def check_jira(msg)
@@ -25,7 +25,7 @@ class Jira < CampfireBot::Plugin
     saw_an_issue = false
     old_cache = Marshal::load(Marshal.dump(@cached_ids)) # since ruby doesn't have deep copy
     
-    lastlast = time_ago_in_words(@last_checked)
+    @lastlast = time_ago_in_words(@last_checked)
     tix = fetch_jira_url
     
     tix.each do |ticket|
