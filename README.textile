@@ -1,3 +1,9 @@
+h1. Campfire Bot has a new lead developer & maintainer
+
+Further development of campfire-bot has moved to "joshwand/campfire-bot":http://github.com/joshwand/campfire-bot.
+
+Thanks to Josh for taking it on!
+
 h1. Campfire Bot
 
 This is an under-heavy-development bot for the Campfire web-based chat system.
